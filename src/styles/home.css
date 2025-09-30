@@ -1,0 +1,10 @@
+.estiloHora {
+  margin-top: 20px;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  display: inline-block;
+  background: #f9f9f9;
+  font-weight: bold;
+  font-size: 25px;
+}
