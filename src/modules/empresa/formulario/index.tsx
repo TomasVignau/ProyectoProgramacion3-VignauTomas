@@ -1,4 +1,4 @@
-import "../../styles/formulario.css";
+import "../../../styles/formulario.css";
 import { useState } from "react";
 import {
   Form,
@@ -11,11 +11,11 @@ import {
   message,
   Upload,
 } from "antd";
-import { FormValues } from "../../types/FormValues";
+import { FormValues } from "../../../types/FormValues";
 import dayjs from "dayjs";
 import { UploadOutlined } from "@ant-design/icons";
 
-export const Formulario = () => {
+export const FormularioEmpresa = () => {
   const [progress, setProgress] = useState(0);
 
   const fields: (keyof FormValues)[] = ["nombre", "descripcion", "fechaTope"];

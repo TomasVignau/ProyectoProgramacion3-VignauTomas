@@ -1,4 +1,4 @@
-import '../../styles/layout.css'
+import '../../../styles/layout.css'
 import { FC, useState } from "react";
 import { MenuProps, Layout, Menu, Typography, theme } from "antd";
 import {
@@ -28,13 +28,13 @@ function getItem(
 }
 
 const items: MenuItem[] = [
-  getItem(<Link to="/home">Inicio</Link>, "/home", <HomeOutlined />),
-  getItem(<Link to="/formulario">Publicar Desafío</Link>,"/formulario" , <MailOutlined />),
-  getItem(<Link to="/desafios">Desafíos</Link>,"/desafios" , <UserOutlined />),
+  getItem(<Link to="/emprendedor/home">Inicio</Link>, "/emprendedor/home", <HomeOutlined />),
+  getItem(<Link to="/emprendedor/desafiosPublicados">Desafios Publicados</Link>,"/emprendedor/desafiosPublicados" , <MailOutlined />),
+  getItem(<Link to="/emprendedor/propuestas">Propuestas</Link>,"/emprendedor/propuestas" , <UserOutlined />),
   getItem(<Link to="/" style={{color: "red"}}>Desloguear</Link>,"/" , <UserOutlined style={{color: "red"}}/>),
 ];
 
-export const LayoutCustom: FC = () => {
+export const LayoutCustomEmprendedor: FC = () => {
   const [collapsed, setCollapsed] = useState(false);
   const location = useLocation(); // para saber en qué ruta estamos
 
@@ -86,7 +86,7 @@ export const LayoutCustom: FC = () => {
         </Content>
 
         <Footer style={{ textAlign: "center" }}>
-          Tomás Vignau © {new Date().getFullYear()} 
+          Tomás Vignau - INSPT  © {new Date().getFullYear()} 
         </Footer>
       </Layout>
     </Layout>

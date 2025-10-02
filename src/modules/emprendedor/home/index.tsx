@@ -1,8 +1,8 @@
-import "../../styles/home.css";
+import "../../../styles/home.css";
 import { useState, useEffect } from "react";
 import { Carousel } from "antd";
 
-export const Home = () => {
+export const HomeEmprendedor = () => {
   const [hora, setHora] = useState(new Date());
 
   useEffect(() => {
@@ -15,7 +15,7 @@ export const Home = () => {
 
   return (
     <div style={{ textAlign: "center" }}>
-      <h1>Bienvenido a la página de inicio</h1>
+      <h1>Bienvenido EMPRENDEDOR a la página de inicio</h1>
       <p>Usa el menú lateral para navegar.</p>
 
       <Carousel
@@ -32,7 +32,7 @@ export const Home = () => {
         <div>
           <div className="estiloCarousel">
             <img
-              src="https://wallpapers.com/images/hd/business-success-strategy-9e3neoqjyveyskog.jpg"
+              src="https://wallpapers.com/images/hd/entrepreneur-skyscraper-5ze2orkv2zv9pbhl.jpg"
               alt="Empresa"
             />
           </div>
@@ -41,7 +41,7 @@ export const Home = () => {
         <div>
           <div className="estiloCarousel">
             <img
-              src="https://wallpapers.com/images/featured/negocios-jzw8ax93flqonkce.jpg"
+              src="https://e1.pxfuel.com/desktop-wallpaper/990/550/desktop-wallpaper-entrepreneur-entrapreneur.jpg"
               alt="Empresa"
             />
           </div>
@@ -50,7 +50,7 @@ export const Home = () => {
         <div>
           <div className="estiloCarousel">
             <img
-              src="https://www.decisores.com/wp-content/uploads/2021/06/Empresa.jpg"
+              src="https://cdn.forbes.com.mx/2022/11/emprendimiento-emprendedores-empresa-contabilidad-credito.jpg"
               alt="Empresa"
             />
           </div>

@@ -1,11 +1,11 @@
 import { Button, Table, Spin } from "antd";
 import { Link } from "react-router-dom";
-import { FormValues } from "../../types/FormValues";
+import { FormValues } from "../../../types/FormValues";
 import { useState, useEffect } from "react";
-import { content } from "../../utils/content";
-import Desafios from "../../data/desafios.json";
+import { content } from "../../../utils/content";
+import Desafios from "../../../data/desafios.json";
 
-export const Desafio = () => {
+export const PropuestasEmprendedor = () => {
   const [desafios, setDesafios] = useState<FormValues[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 

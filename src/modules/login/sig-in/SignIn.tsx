@@ -62,6 +62,11 @@ const SignInContainer = styled(Stack)(({ theme }) => ({
   },
 }));
 
+const users = [
+  { username: "empresa", password: "123", role: "empresa" },
+  { username: "emprendedor", password: "123", role: "emprendedor" },
+];
+
 export default function SignIn(props: { disableCustomTheme?: boolean }) {
   const [userError, setuserError] = React.useState(false);
   const [userErrorMessage, setuserErrorMessage] = React.useState("");
@@ -70,57 +75,43 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
   const [open, setOpen] = React.useState(false);
   const navigate = useNavigate();
 
-  /*const handleClickOpen = () => {
-    setOpen(true);
-  };*/
-
   const handleClose = () => {
     setOpen(false);
   };
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault(); // siempre prevenís el submit por defecto
-
-    const isValid = validateInputs();
-
-    if (!isValid) {
-      return; // si hay error, cortás acá
-    }
+    event.preventDefault();
 
     const data = new FormData(event.currentTarget);
-    console.log({
-      user: data.get("user"),
-      password: data.get("password"),
-    });
+    const username = String(data.get("user"));
+    const password = String(data.get("password"));
 
-    navigate("/home");
-  };
+    // buscamos el usuario en nuestra "BD" local
+    const foundUser = users.find(
+      (u) => u.username === username && u.password === password
+    );
 
-  const validateInputs = () => {
-    const user = document.getElementById("user") as HTMLInputElement;
-    const password = document.getElementById("password") as HTMLInputElement;
-
-    let isValid = true;
-
-    if (!user.value || user.value !== "tomas") {
+    if (!foundUser) {
+      // mostrar errores si no coincide
       setuserError(true);
-      setuserErrorMessage("Incorrect User.");
-      isValid = false;
-    } else {
-      setuserError(false);
-      setuserErrorMessage("");
-    }
-
-    if (!password.value || password.value !== "123") {
+      setuserErrorMessage("Usuario o contraseña incorrectos.");
       setPasswordError(true);
-      setPasswordErrorMessage("Incorrect Password.");
-      isValid = false;
-    } else {
-      setPasswordError(false);
-      setPasswordErrorMessage("");
+      setPasswordErrorMessage("Usuario o contraseña incorrectos.");
+      return;
     }
 
-    return isValid;
+    // si pasa validación limpiamos errores
+    setuserError(false);
+    setuserErrorMessage("");
+    setPasswordError(false);
+    setPasswordErrorMessage("");
+
+    // según el rol, redirigimos
+    if (foundUser.role === "empresa") {
+      navigate("/empresa/home");
+    } else if (foundUser.role === "emprendedor") {
+      navigate("/emprendedor/home");
+    }
   };
 
   return (
@@ -151,7 +142,7 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
             }}
           >
             <FormControl>
-              <FormLabel htmlFor="user">user</FormLabel>
+              <FormLabel htmlFor="user">User</FormLabel>
               <TextField
                 error={userError}
                 helperText={userErrorMessage}
