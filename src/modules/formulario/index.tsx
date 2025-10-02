@@ -1,14 +1,24 @@
 import "../../styles/formulario.css";
 import { useState } from "react";
-import { Form, Select, InputNumber, Button, Input, Flex, Progress } from "antd";
+import {
+  Form,
+  Button,
+  Input,
+  Flex,
+  Progress,
+  DatePicker,
+  UploadProps,
+  message,
+  Upload,
+} from "antd";
 import { FormValues } from "../../types/FormValues";
-
-const { Option } = Select;
+import dayjs from "dayjs";
+import { UploadOutlined } from "@ant-design/icons";
 
 export const Formulario = () => {
   const [progress, setProgress] = useState(0);
 
-  const fields: (keyof FormValues)[] = ["nombre", "dni", "telefono", "sexo", "peso"];
+  const fields: (keyof FormValues)[] = ["nombre", "descripcion", "fechaTope"];
 
   const handleValuesChange = (
     changedValues: Partial<FormValues>,
@@ -27,6 +37,29 @@ export const Formulario = () => {
     setProgress(percent);
   };
 
+  //No deja seleccionar una fecha anterior a la actual.
+  const disabledDate = (current: dayjs.Dayjs) => {
+    return current && current < dayjs().startOf("day");
+  };
+
+  const props: UploadProps = {
+    name: "file",
+    action: "https://660d2bd96ddfa2943b33731c.mockapi.io/api/upload",
+    headers: {
+      authorization: "authorization-text",
+    },
+    onChange(info) {
+      if (info.file.status !== "uploading") {
+        console.log(info.file, info.fileList);
+      }
+      if (info.file.status === "done") {
+        message.success(`${info.file.name} file uploaded successfully`);
+      } else if (info.file.status === "error") {
+        message.error(`${info.file.name} file upload failed.`);
+      }
+    },
+  };
+
   return (
     <div className="divStyle">
       <Form
@@ -35,45 +68,52 @@ export const Formulario = () => {
         onValuesChange={handleValuesChange}
       >
         <Form.Item
-          label="Nombre"
+          label="Nombre del desafío"
           name="nombre"
-          rules={[{ required: true, message: "Ingrese su nombre" }]}
+          rules={[{ required: true, message: "Ingrese el nombre del desafío" }]}
         >
-          <Input></Input>
+          <Input ></Input>
         </Form.Item>
         <Form.Item
-          label="DNI"
-          name="dni"
-          rules={[{ required: true, message: "Ingrese su dni" }]}
+          label="Descripción del desafío"
+          name="descripcion"
+          rules={[
+            {
+              required: true,
+              message: "Ingrese una breve descripción del desafio",
+            },
+          ]}
         >
-          <Input></Input>
+          <Input.TextArea />
         </Form.Item>
         <Form.Item
-          label="Telefono"
-          name="telefono"
-          rules={[{ required: true, message: "Ingrese su telefono" }]}
+          label="Fecha tope de envío"
+          name="fechaTope"
+          rules={[{ required: true, message: "Ingrese una fecha válida." }]}
         >
-          <Input></Input>
+          <DatePicker disabledDate={disabledDate} />
         </Form.Item>
+
         <Form.Item
-          label="Sexo"
-          name="sexo"
-          rules={[{ required: true, message: "Seleccione el sexo" }]}
+          name="archivo"
+          rules={[{ required: false }]}
         >
-          <Select placeholder="Seleccione...">
-            <Option value="MASCULINO">MASCULINO</Option>
-            <Option value="FEMENINO">FEMENINO</Option>
-          </Select>
+          <Upload {...props}>
+            <Button icon={<UploadOutlined />}>Cargar Archivo</Button>
+          </Upload>
         </Form.Item>
-        <Form.Item
-          label="Peso (kg)"
-          name="peso"
-          rules={[{ required: true, message: "Ingrese el peso" }]}
+
+        <Button
+          type="primary"
+          htmlType="submit"
+          block
+          onClick={
+            progress == 100
+              ? () => alert("Lógica para enviar datos")
+              : () => alert("Completa todos los datos antes de enviar")
+          }
         >
-          <InputNumber min={1} step={0.1} style={{ width: "100%" }} />
-        </Form.Item>
-        <Button type="primary" htmlType="submit" block onClick={progress==100 ? () => alert("Lógica para enviar datos") : () => alert("Completa todos los datos antes de enviar")}>
-          Enviar
+          PUBLICAR
         </Button>
       </Form>
 

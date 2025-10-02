@@ -1,0 +1,22 @@
+[
+  {
+    "nombre": "Desafío 1",
+    "descripcion": "Resolver ejercicios de lógica matemática",
+    "fechaTope": "2025-10-05"
+  },
+  {
+    "nombre": "Desafío 2",
+    "descripcion": "Crear un formulario con validación en React",
+    "fechaTope": "2025-10-12"
+  },
+  {
+    "nombre": "Desafío 3",
+    "descripcion": "Diseñar un diagrama de base de datos para un sistema de reservas",
+    "fechaTope": "2025-10-20"
+  },
+  {
+    "nombre": "Desafío 4",
+    "descripcion": "Implementar un juego tipo Arkanoid en C++ con SFML",
+    "fechaTope": "2025-11-01"
+  }
+]

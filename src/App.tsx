@@ -2,7 +2,7 @@ import { Routes, Route, BrowserRouter } from "react-router-dom";
 import { Home } from "./modules/home";
 import { Formulario } from "./modules/formulario";
 import { NotFound } from "./modules/notFound";
-import { Personas } from "./modules/personas";
+import { Desafio } from "./modules/desafios";
 import { LayoutCustom } from './modules/layout';
 import { Login } from './modules/login';
 
@@ -14,7 +14,7 @@ export const App = () => (
         <Route element={<LayoutCustom />}>
           <Route path="/home" element={<Home />} />
           <Route path="/formulario" element={<Formulario />} />
-          <Route path="/personas" element={<Personas />} />
+          <Route path="/desafios" element={<Desafio />} />
           <Route path="/*" element={<NotFound />} />
         </Route>
       </Routes>

@@ -29,8 +29,8 @@ function getItem(
 
 const items: MenuItem[] = [
   getItem(<Link to="/home">Inicio</Link>, "/home", <HomeOutlined />),
-  getItem(<Link to="/formulario">Formulario</Link>,"/formulario" , <MailOutlined />),
-  getItem(<Link to="/personas">Personas</Link>,"/personas" , <UserOutlined />),
+  getItem(<Link to="/formulario">Publicar Desafío</Link>,"/formulario" , <MailOutlined />),
+  getItem(<Link to="/desafios">Desafíos</Link>,"/desafios" , <UserOutlined />),
   getItem(<Link to="/" style={{color: "red"}}>Desloguear</Link>,"/" , <UserOutlined style={{color: "red"}}/>),
 ];
 
@@ -86,7 +86,7 @@ export const LayoutCustom: FC = () => {
         </Content>
 
         <Footer style={{ textAlign: "center" }}>
-          Personas © {new Date().getFullYear()} 
+          Tomás Vignau © {new Date().getFullYear()} 
         </Footer>
       </Layout>
     </Layout>
