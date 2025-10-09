@@ -1,15 +1,15 @@
 import { Button, Table, Spin } from "antd";
 import { Link } from "react-router-dom";
-import { FormValues } from "../../../types/FormValues";
+import { DesafioFormValues } from "../../../types/desafioFormValues";
 import { useState, useEffect } from "react";
 import { content } from "../../../utils/content";
 import Desafios from "../../../data/desafios.json";
 
 export const DesafiosEmpresa = () => {
-  const [desafios, setDesafios] = useState<FormValues[]>([]);
+  const [desafios, setDesafios] = useState<DesafioFormValues[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
-  const formatearDesafios: FormValues[] = Desafios.map((d) => ({
+  const formatearDesafios: DesafioFormValues[] = Desafios.map((d) => ({
     ...d,
     fechaTope: new Date(d.fechaTope),
     archivo: [],
@@ -28,8 +28,8 @@ export const DesafiosEmpresa = () => {
     return () => clearTimeout(timer);
   }, []);
 
-  const handleClick = (desafio: FormValues) => {
-    alert("Desafío seleccionado: " + desafio.nombre);
+  const handleClick = (desafio: DesafioFormValues) => {
+    alert("Desafío seleccionado: " + desafio.id + " - " + desafio.nombre);
   };
 
   // _ es el valor de la celda (no lo usamos)
@@ -37,6 +37,11 @@ export const DesafiosEmpresa = () => {
   // Podés poner cualquier componente dentro del render, no solo botones
 
   const columns = [
+    {
+      title: "Id",
+      dataIndex: "id",
+      key: "id",
+    },
     {
       title: "Nombre",
       dataIndex: "nombre",
@@ -56,7 +61,7 @@ export const DesafiosEmpresa = () => {
     {
       title: "Acciones",
       dataIndex: "acciones",
-      render: (_: unknown, record: FormValues) => (
+      render: (_: unknown, record: DesafioFormValues) => (
         <Button type="primary" onClick={() => handleClick(record)}>
           Ver propuestas
         </Button>
@@ -74,11 +79,11 @@ export const DesafiosEmpresa = () => {
         </Spin>
       ) : (
         <>
-          <Table dataSource={desafios} columns={columns} rowKey="nombre" />
+          <Table dataSource={desafios} columns={columns} rowKey="id" />
         </>
       )}
 
-      <Link to="/home">
+      <Link to="/empresa/home">
         <Button type="primary" style={{ marginTop: 16 }}>
           Volver al Inicio
         </Button>

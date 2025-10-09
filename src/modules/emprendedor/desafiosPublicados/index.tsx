@@ -9,7 +9,7 @@ export const DesafiosPublicados = () => {
     <div className="divDesafios">
       {desafiosData.map((desafio) => (
         <Card
-          key={desafio.nombre}
+          key={desafio.id}
           title={desafio.nombre}
           variant="borderless"
           style={{ width: 300 }}

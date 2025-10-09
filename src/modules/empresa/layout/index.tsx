@@ -1,6 +1,6 @@
 import '../../../styles/layout.css'
 import { FC, useState } from "react";
-import { MenuProps, Layout, Menu, Typography, theme } from "antd";
+import { MenuProps, Layout, Menu, Typography } from "antd";
 import {
   MailOutlined,
   HomeOutlined,
@@ -28,9 +28,9 @@ function getItem(
 }
 
 const items: MenuItem[] = [
-  getItem(<Link to="/empresa/home">Inicio</Link>, "/empresa/home", <HomeOutlined />),
-  getItem(<Link to="/empresa/formulario">Publicar Desafío</Link>,"/empresa/formulario" , <MailOutlined />),
-  getItem(<Link to="/empresa/desafios">Desafíos</Link>,"/empresa/desafios" , <UserOutlined />),
+  getItem(<Link to="/empresa/home" className='colorTextoMenu'>Inicio</Link>, "/empresa/home", <HomeOutlined className='colorTextoMenu'/>),
+  getItem(<Link to="/empresa/formulario" className='colorTextoMenu'>Publicar Desafío</Link>,"/empresa/formulario" , <MailOutlined className='colorTextoMenu'/>),
+  getItem(<Link to="/empresa/desafios" className='colorTextoMenu'>Desafíos</Link>,"/empresa/desafios" , <UserOutlined className='colorTextoMenu'/>),
   getItem(<Link to="/" style={{color: "red"}}>Desloguear</Link>,"/" , <UserOutlined style={{color: "red"}}/>),
 ];
 
@@ -38,15 +38,12 @@ export const LayoutCustomEmpresa: FC = () => {
   const [collapsed, setCollapsed] = useState(false);
   const location = useLocation(); // para saber en qué ruta estamos
 
-  const {
-    token: { colorBgContainer },
-  } = theme.useToken();
-
   return (
     <Layout style={{ minHeight: "100vh" }}>
       <Sider
         collapsible
         collapsed={collapsed}
+        style={{background: "#463F3A"}}
         onCollapse={(value) => setCollapsed(value)}
       >
         <div className="demo-logo-vertical" />
@@ -55,6 +52,9 @@ export const LayoutCustomEmpresa: FC = () => {
           selectedKeys={[location.pathname]}  // se actualiza según la ruta
           mode="inline"
           items={items}
+          style={{
+            background: "#463F3A"
+          }}
         />
       </Sider>
 
@@ -62,13 +62,13 @@ export const LayoutCustomEmpresa: FC = () => {
         <Header
           style={{
             padding: 0,
-            background: colorBgContainer,
+            background: "#BCB8B1",
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
           }}
         >
-          <Title level={3} className='title'>
+          <Title level={2} style={{fontWeight: "bold", color: "#463F3A"}} className='title'>
             PLATAFORMA DE INNOVACIÓN Y PROPUESTA EMPRESARIALES
           </Title>
         </Header>
@@ -78,7 +78,7 @@ export const LayoutCustomEmpresa: FC = () => {
             style={{
               padding: 24,
               minHeight: 360,
-              background: colorBgContainer,
+              background: "#BCB8B1",
             }}
           >
             <Outlet />

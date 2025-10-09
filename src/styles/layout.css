@@ -17,3 +17,20 @@ nav ul {
   font-weight: bold;
   margin: 0;
 }
+
+.colorTextoMenu {
+  color: "#F4F3EE";
+}
+
+/* Cambiar color del botón de colapso */
+.ant-layout-sider-trigger {
+  background: #8A817C !important; /* color de fondo */
+  color: #F4F3EE !important; /* color del icono */
+  border-top: 3px solid #F4F3EE; /* opcional, para separar del sider */
+}
+
+/* Color de fondo del item seleccionado */
+.ant-menu-dark .ant-menu-item-selected {
+  background-color: #f59140 !important;
+}
+

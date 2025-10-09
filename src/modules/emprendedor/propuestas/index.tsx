@@ -1,19 +1,18 @@
-import { Button, Table, Spin } from "antd";
+import { Button, Table, Spin, Tag } from "antd";
 import { Link } from "react-router-dom";
-import { FormValues } from "../../../types/FormValues";
+import { PropuestaFormValues } from "../../../types/propuestaFormValues";
 import { useState, useEffect } from "react";
 import { content } from "../../../utils/content";
-import Desafios from "../../../data/desafios.json";
+import PropuestasData from "../../../data/propuestas.json";
+import {
+  CheckCircleOutlined,
+  SyncOutlined,
+  CloseCircleOutlined,
+} from "@ant-design/icons";
 
 export const PropuestasEmprendedor = () => {
-  const [desafios, setDesafios] = useState<FormValues[]>([]);
+  const [propuestas, setPropuestas] = useState<PropuestaFormValues[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-
-  const formatearDesafios: FormValues[] = Desafios.map((d) => ({
-    ...d,
-    fechaTope: new Date(d.fechaTope),
-    archivo: [],
-  }));
 
   useEffect(() => {
     console.log("Obteniendo desafíos publicados...");
@@ -21,64 +20,75 @@ export const PropuestasEmprendedor = () => {
 
     // Simulo carga desde el JSON
     const timer = setTimeout(() => {
-      setDesafios(formatearDesafios);
+      setPropuestas(PropuestasData);
       setIsLoading(false);
     }, 2000);
 
     return () => clearTimeout(timer);
   }, []);
 
-  const handleClick = (desafio: FormValues) => {
-    alert("Desafío seleccionado: " + desafio.nombre);
-  };
-
-  // _ es el valor de la celda (no lo usamos)
-  // record es el objeto completo de la fila
-  // Podés poner cualquier componente dentro del render, no solo botones
-
   const columns = [
     {
-      title: "Nombre",
-      dataIndex: "nombre",
-      key: "nombre",
+      title: "Id-Desafio",
+      dataIndex: "idDesafio",
+      key: "idDesafio",
     },
     {
-      title: "Descripcion",
-      dataIndex: "descripcion",
-      key: "descripcion",
+      title: "Nombre Desafío",
+      dataIndex: "nombreDesafio",
+      key: "nombreDesafio",
     },
     {
-      title: "Fecha Tope",
-      dataIndex: "fechaTope",
-      key: "fechaTope",
-      render: (fecha: Date) => fecha.toLocaleDateString(),
+      title: "Nombre Empresa",
+      dataIndex: "nombreEmpresa",
+      key: "nombreEmpresa",
     },
     {
-      title: "Acciones",
-      dataIndex: "acciones",
-      render: (_: unknown, record: FormValues) => (
-        <Button type="primary" onClick={() => handleClick(record)}>
-          Ver propuestas
-        </Button>
-      ),
+      title: "Estado",
+      dataIndex: "estado",
+      key: "estado",
+      render: (estado: string) => {
+        switch (estado) {
+          case "aceptada":
+            return (
+              <Tag icon={<CheckCircleOutlined />} color="green">
+                Aceptada
+              </Tag>
+            );
+          case "rechazada":
+            return (
+              <Tag icon={<CloseCircleOutlined />} color="red">
+                Rechazada
+              </Tag>
+            );
+          case "pendiente":
+            return (
+              <Tag icon={<SyncOutlined spin />} color="blue">
+                Pendiente
+              </Tag>
+            );
+          default:
+            return <Tag color="default">{estado}</Tag>;
+        }
+      },
     },
   ];
 
   return (
     <div style={{ padding: 20 }}>
-      <h2>Listado de Desafíos</h2>
+      <h2>Listado de Propuestas</h2>
 
       {isLoading ? (
-        <Spin tip="Cargando informacion de los desafíos..." size="large">
+        <Spin tip="Cargando informacion de las propuestas..." size="large">
           {content}
         </Spin>
       ) : (
         <>
-          <Table dataSource={desafios} columns={columns} rowKey="nombre" />
+          <Table dataSource={propuestas} columns={columns} rowKey="id" />
         </>
       )}
 
-      <Link to="/home">
+      <Link to="/emprendedor/home">
         <Button type="primary" style={{ marginTop: 16 }}>
           Volver al Inicio
         </Button>

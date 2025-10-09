@@ -11,18 +11,18 @@ import {
   message,
   Upload,
 } from "antd";
-import { FormValues } from "../../../types/FormValues";
+import { DesafioFormValues } from "../../../types/desafioFormValues";
 import dayjs from "dayjs";
 import { UploadOutlined } from "@ant-design/icons";
 
 export const FormularioEmpresa = () => {
   const [progress, setProgress] = useState(0);
 
-  const fields: (keyof FormValues)[] = ["nombre", "descripcion", "fechaTope"];
+  const fields: (keyof DesafioFormValues)[] = ["nombre", "descripcion", "fechaTope"];
 
   const handleValuesChange = (
-    changedValues: Partial<FormValues>,
-    allValues: FormValues
+    changedValues: Partial<DesafioFormValues>,
+    allValues: DesafioFormValues
   ) => {
     // contar cuántos campos ya tienen un valor
     /*onValuesChange de Ant Design ejecuta esta función cada vez que un campo cambia.

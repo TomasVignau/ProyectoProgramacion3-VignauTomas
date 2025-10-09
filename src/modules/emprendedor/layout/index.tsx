@@ -1,11 +1,7 @@
-import '../../../styles/layout.css'
+import "../../../styles/layout.css";
 import { FC, useState } from "react";
-import { MenuProps, Layout, Menu, Typography, theme } from "antd";
-import {
-  MailOutlined,
-  HomeOutlined,
-  UserOutlined,
-} from "@ant-design/icons";
+import { MenuProps, Layout, Menu, Typography } from "antd";
+import { MailOutlined, HomeOutlined, UserOutlined } from "@ant-design/icons";
 import { Outlet, Link, useLocation } from "react-router-dom";
 
 const { Header, Content, Footer, Sider } = Layout;
@@ -28,47 +24,71 @@ function getItem(
 }
 
 const items: MenuItem[] = [
-  getItem(<Link to="/emprendedor/home">Inicio</Link>, "/emprendedor/home", <HomeOutlined />),
-  getItem(<Link to="/emprendedor/desafiosPublicados">Desafios Publicados</Link>,"/emprendedor/desafiosPublicados" , <MailOutlined />),
-  getItem(<Link to="/emprendedor/propuestas">Propuestas</Link>,"/emprendedor/propuestas" , <UserOutlined />),
-  getItem(<Link to="/" style={{color: "red"}}>Desloguear</Link>,"/" , <UserOutlined style={{color: "red"}}/>),
+  getItem(
+    <Link to="/emprendedor/home" className="colorTextoMenu">
+      Inicio
+    </Link>,
+    "/emprendedor/home",
+    <HomeOutlined className="colorTextoMenu" />
+  ),
+  getItem(
+    <Link to="/emprendedor/desafiosPublicados" className="colorTextoMenu">
+      Desafios Publicados
+    </Link>,
+    "/emprendedor/desafiosPublicados",
+    <MailOutlined className="colorTextoMenu" />
+  ),
+  getItem(
+    <Link to="/emprendedor/propuestas" className="colorTextoMenu">
+      Prop. Personales
+    </Link>,
+    "/emprendedor/propuestas",
+    <UserOutlined className="colorTextoMenu" />
+  ),
+  getItem(
+    <Link to="/" style={{ color: "red" }}>
+      Desloguear
+    </Link>,
+    "/",
+    <UserOutlined style={{ color: "red" }} />
+  ),
 ];
 
 export const LayoutCustomEmprendedor: FC = () => {
   const [collapsed, setCollapsed] = useState(false);
   const location = useLocation(); // para saber en qué ruta estamos
 
-  const {
-    token: { colorBgContainer },
-  } = theme.useToken();
-
   return (
     <Layout style={{ minHeight: "100vh" }}>
       <Sider
         collapsible
         collapsed={collapsed}
+        style={{ background: "#463F3A" }}
         onCollapse={(value) => setCollapsed(value)}
       >
         <div className="demo-logo-vertical" />
         <Menu
           theme="dark"
-          selectedKeys={[location.pathname]}  // se actualiza según la ruta
+          selectedKeys={[location.pathname]} // se actualiza según la ruta
           mode="inline"
           items={items}
+          style={{
+            background: "#463F3A",
+          }}
         />
       </Sider>
 
-      <Layout style={{ width: "100%"}}>
+      <Layout style={{ width: "100%" }}>
         <Header
           style={{
             padding: 0,
-            background: colorBgContainer,
+            background: "#BCB8B1",
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
           }}
         >
-          <Title level={3} className='title'>
+          <Title level={2} style={{fontWeight: "bold", color: "#463F3A"}} className='title'>
             PLATAFORMA DE INNOVACIÓN Y PROPUESTA EMPRESARIALES
           </Title>
         </Header>
@@ -78,7 +98,7 @@ export const LayoutCustomEmprendedor: FC = () => {
             style={{
               padding: 24,
               minHeight: 360,
-              background: colorBgContainer,
+              background: "#BCB8B1",
             }}
           >
             <Outlet />
@@ -86,7 +106,7 @@ export const LayoutCustomEmprendedor: FC = () => {
         </Content>
 
         <Footer style={{ textAlign: "center" }}>
-          Tomás Vignau - INSPT  © {new Date().getFullYear()} 
+          Tomás Vignau - INSPT © {new Date().getFullYear()}
         </Footer>
       </Layout>
     </Layout>
