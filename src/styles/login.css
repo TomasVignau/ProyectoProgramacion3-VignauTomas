@@ -1,14 +1,15 @@
 /* ===== CONTENEDOR GENERAL ===== */
 .loginContainer {
   min-height: 100vh;
-  background: linear-gradient(135deg, #a56666 25%, #4a6a97 100%);
+  background: linear-gradient(135deg, #BCB8B1 25%, #5A524C 100%);
   font-family: "Poppins", sans-serif;
 }
 
+/* ===== COLUMNA LOGIN ===== */
 .loginCol { 
   display: flex; 
-  align-items: center; /* vertical */ 
-  justify-content: center; /* horizontal */ 
+  align-items: center; 
+  justify-content: center; 
 }
 
 /* ===== COLUMNA IZQUIERDA ===== */
@@ -24,7 +25,7 @@
 
 .tituloPlataforma {
   font-size: 2rem;
-  color: #0a3d62;
+  color: #5A524C;
   font-weight: 700;
   margin-bottom: 25px;
   text-align: center;
@@ -67,8 +68,9 @@
     flex-direction: column;
   }
 
-  .infoCol {
-    padding: 40px 30px;
+  .infoCol, .loginCol {
+    width: 100%;
+    padding: 40px 20px;
   }
 
   .tituloPlataforma {
@@ -81,5 +83,19 @@
 
   .carouselWrapper {
     max-width: 90%;
+  }
+}
+
+@media (max-width: 576px) {
+  .tituloPlataforma {
+    font-size: 1.4rem;
+  }
+
+  .descripcionPlataforma {
+    font-size: 0.9rem;
+  }
+
+  .carouselWrapper .slide {
+    height: 200px;
   }
 }

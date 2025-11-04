@@ -1,4 +1,4 @@
-.estiloHora {
+/*.estiloHora {
   margin-top: 20px;
   padding: 20px;
   border: 1px solid #ccc;
@@ -8,6 +8,7 @@
   font-weight: bold;
   font-size: 25px;
 }
+
 
 .estiloCarousel {
   display: flex;
@@ -23,6 +24,207 @@
   height: 100%;
   object-fit: cover;
   border-radius: 15px;
+}*/
+
+/* ===== RESPONSIVE ===== */
+/*@media (max-width: 992px) {
+  .estiloHora {
+    font-size: 20px;
+    padding: 15px;
+  }
+
+  .estiloCarousel {
+    height: 200px;
+  }
 }
 
+@media (max-width: 576px) {
+  .estiloHora {
+    font-size: 16px;
+    padding: 10px;
+  }
 
+  .estiloCarousel {
+    height: 150px;
+  }
+}*/
+
+/* ======== CONTENEDOR PRINCIPAL ======== */
+.home-container {
+  width: 100%;
+  min-height: 100vh;
+  overflow-x: hidden;
+  display: flex;
+  justify-content: center;
+  background-color: #f5f5f5;
+  box-sizing: border-box;
+}
+
+.home-container.emprendedor {
+  background: #f9f7f4; /* tono más cálido o distinto */
+}
+
+.home-content {
+  width: 100%;
+  margin: 0 auto;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+/* ======== HEADER ======== */
+.home-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.home-title {
+  color: #463f3a !important;
+  margin: 0 !important;
+}
+
+.home-bell {
+  font-size: 28px;
+  color: #463f3a;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.home-bell:hover {
+  transform: scale(1.1);
+}
+
+.menu-item {
+  max-width: 300px;
+  padding: 4px 0;
+}
+
+/* ======== TARJETA PRINCIPAL ======== */
+.home-card {
+  border-radius: 12px !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08) !important;
+  background: linear-gradient(135deg, #f5f5f5 0%, #ffffff 100%) !important;
+  border: 2px solid #cebdafff !important;
+}
+
+.home-description {
+  font-size: 16px !important;
+  color: #666 !important;
+  margin-bottom: 24px !important;
+}
+
+/* ======== CAROUSEL ======== */
+.estiloCarousel {
+  height: 450px;
+  overflow: hidden;
+  border-radius: 15px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.estiloCarousel img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+  display: block;
+}
+
+.estiloCarousel:hover img {
+  transform: scale(1.05);
+}
+
+.ant-carousel .slick-dots li button {
+  background: #463f3a !important;
+}
+
+.ant-carousel .slick-dots li.slick-active button {
+  background: #463f3a !important;
+}
+
+/* ======== CARDS INFERIORES ======== */
+.home-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 16px;
+}
+
+.home-card-mini {
+  border-radius: 12px !important;
+  text-align: center;
+  border: 2px solid #cebdafff !important;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.home-card-mini:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
+}
+
+.home-icon {
+  font-size: 48px;
+  color: #463f3a;
+  margin-bottom: 16px;
+}
+
+.home-link {
+  text-decoration: none;
+}
+
+.home-notifications {
+  margin-top: 6px;
+  margin-right: 10px;
+}
+
+/* ======== RESPONSIVE ======== */
+@media (max-width: 992px) {
+  .estiloCarousel {
+    height: 350px;
+  }
+}
+
+@media (max-width: 768px) {
+  .estiloCarousel {
+    height: 250px;
+  }
+
+  .home-title {
+    font-size: 1.6rem !important;
+  }
+
+  .home-bell {
+    font-size: 24px;
+  }
+}
+
+@media (max-width: 576px) {
+  .estiloCarousel {
+    height: 180px;
+    border-radius: 10px;
+  }
+
+  .ant-carousel .slick-dots {
+    bottom: 8px !important;
+  }
+
+  .home-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+/* ======== FIX OVERFLOW ======== */
+html,
+body,
+#root,
+.ant-layout,
+.ant-layout-content,
+.ant-space,
+.ant-card,
+.ant-card-body {
+  box-sizing: border-box;
+  overflow-x: hidden;
+  max-width: 100%;
+}

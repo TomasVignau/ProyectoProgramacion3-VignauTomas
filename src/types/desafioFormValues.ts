@@ -1,9 +1,10 @@
-import type { UploadFile } from "antd/es/upload/interface";
-
 export interface DesafioFormValues {
-  id?: number;
-  nombre: string;
-  descripcion: string;
-  fechaTope: Date;
-  archivo: UploadFile[];
+  _id?: string;
+  title: string;
+  description: string;
+  idCompany: string;
+  category: string;
+  publicationDate: Date;
+  expirationDate: Date;
+  isActive: boolean;
 }

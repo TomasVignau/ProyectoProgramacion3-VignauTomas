@@ -1,13 +1,14 @@
-import { Col, Row, Carousel } from "antd";
-import SignIn from "./sig-in/SignIn";
-import "../../styles/login.css";
-
+import { Col, Row, Carousel } from "antd"
+import SignIn from "./sig-in/SignIn"
+import "../../styles/login.css"
 
 export const Login = () => {
+
+
   return (
     <Row className="loginContainer">
-      {/* Columna izquierda: introducción + carrusel */}
-      <Col span={12} className="infoCol">
+      {/* Columna izquierda */}
+      <Col xs={24} sm={24} md={12} className="infoCol">
         <h1 className="tituloPlataforma">
           Plataforma de Innovación y Propuesta Empresariales
         </h1>
@@ -35,21 +36,21 @@ export const Login = () => {
           <Carousel autoplay autoplaySpeed={3000} className="myCarousel">
             <div className="slide">
               <img
-                src="https://wallpapers.com/images/hd/business-success-strategy-9e3neoqjyveyskog.jpg"
+                src="https://fotos.perfil.com/2025/02/12/trim/987/555/tecnicos-1966270.jpg"
                 alt="Empresa"
                 loading="lazy"
               />
             </div>
             <div className="slide">
               <img
-                src="https://wallpapers.com/images/featured/negocios-jzw8ax93flqonkce.jpg"
+                src="https://www.elepoch.com/_next/image?url=https%3A%2F%2Fimages.elepoch.com%2Fassets%2Fuploads%2F2025%2F09%2Fid31202-shutterstock_2068912751-1080x720-1.webp&w=1920&q=75"
                 alt="Empresa"
                 loading="lazy"
               />
             </div>
             <div className="slide">
               <img
-                src="https://www.decisores.com/wp-content/uploads/2021/06/Empresa.jpg"
+                src="https://cdn.computerhoy.com/sites/navi.axelspringer.es/public/media/image/2020/02/lenguaje-programacion-1859691.jpg?tf=3840x"
                 alt="Empresa"
                 loading="lazy"
               />
@@ -59,11 +60,12 @@ export const Login = () => {
       </Col>
 
       {/* Columna derecha: Login */}
-      <Col span={12} className="loginCol">
+      <Col xs={24} sm={24} md={12} className="loginCol">
         <div className="signInWrapper">
           <SignIn />
         </div>
       </Col>
     </Row>
-  );
-};
+  )
+}
+

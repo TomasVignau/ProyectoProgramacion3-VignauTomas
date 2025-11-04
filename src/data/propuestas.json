@@ -2,37 +2,37 @@
   {
     "idDesafio": 1,
     "nombreDesafio": "Desafío 1",
-    "nombreEmpresa": "MathSolutions SA",
+    "nombreEmpresa": "Sofía Ramírez",
     "estado": "pendiente"
   },
   {
     "idDesafio": 2,
     "nombreDesafio": "Desafío 2",
-    "nombreEmpresa": "ReactDev Company",
+    "nombreEmpresa": "Martín López",
     "estado": "rechazada"
   },
   {
     "idDesafio": 3,
     "nombreDesafio": "Desafío 3",
-    "nombreEmpresa": "DataDesign Ltd",
+    "nombreEmpresa": "Lucía Fernández",
     "estado": "aceptada"
   },
   {
     "idDesafio": 4,
     "nombreDesafio": "Desafío 4",
-    "nombreEmpresa": "GameStudioX",
+    "nombreEmpresa": "Tomás Vignau",
     "estado": "pendiente"
   },
   {
     "idDesafio": 5,
     "nombreDesafio": "Desafío 5",
-    "nombreEmpresa": "SoftDesign Corp",
+    "nombreEmpresa": "Valentina Gómez",
     "estado": "aceptada"
   },
   {
     "idDesafio": 6,
     "nombreDesafio": "Desafío 6",
-    "nombreEmpresa": "MathLab SA",
+    "nombreEmpresa": "Sofía Ramírez",
     "estado": "rechazada"
   }
 ]

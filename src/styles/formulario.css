@@ -1,13 +1,140 @@
-.divStyle {
+/*.divStyle {
   display: flex;
   flex-direction: column;
   gap: 16px;
   align-items: stretch;
-}
+}*/
 
-.divDesafios {
+/* Grid para los desafíos */
+/*.divDesafios {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
   gap: 20px;
   padding: 20px;
+}*/
+
+/* ===== RESPONSIVE ===== */
+/*@media (max-width: 992px) {
+  .divStyle {
+    gap: 12px;
+    padding: 0 10px;
+  }
+
+  .divDesafios {
+    gap: 15px;
+    padding: 15px;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  }
+
+  .ant-card {
+    width: 100% !important;
+  }
+
+  .ant-form {
+    max-width: 100% !important;
+  }
+
+  .ant-progress {
+    width: 100% !important;
+  }
+}
+
+@media (max-width: 576px) {
+  .divDesafios {
+    gap: 10px;
+    padding: 10px;
+    grid-template-columns: 1fr;
+  }
+
+  .divStyle {
+    gap: 10px;
+  }
+
+  .ant-card {
+    width: 100% !important;
+  }
+
+  .ant-form {
+    max-width: 100% !important;
+  }
+}*/
+
+.divStyle {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 32px;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+}
+
+.ant-form-item-label > label {
+  font-weight: 600;
+  color: #463F3A;
+}
+
+.ant-input,
+.ant-input-textarea,
+.ant-picker {
+  border-radius: 8px;
+  border: 1px solid #d9d9d9;
+  transition: all 0.3s ease;
+}
+
+.ant-input:hover,
+.ant-input-textarea:hover,
+.ant-picker:hover {
+  border-color: #463F3A;
+}
+
+.ant-input:focus,
+.ant-input-textarea:focus,
+.ant-picker:focus {
+  border-color: #463F3A;
+  box-shadow: 0 0 0 2px rgba(70, 63, 58, 0.1);
+}
+
+.ant-btn-primary {
+  border-radius: 8px;
+  height: 44px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.ant-btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(70, 63, 58, 0.3);
+}
+
+.ant-progress-bg {
+  background-color: #463F3A !important;
+}
+
+/* ======== RESPONSIVE ======== */
+@media (max-width: 992px) {
+  .divStyle {
+    max-width: 90%;
+    padding: 24px;
+  }
+
+  .ant-btn-primary {
+    height: 42px;
+    font-size: 0.95rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .divStyle {
+    padding: 20px;
+    box-shadow: none;
+  }
+
+  .ant-form-item-label > label {
+    font-size: 0.9rem;
+  }
+
+  .ant-btn-primary {
+    height: 40px;
+    font-size: 0.9rem;
+  }
 }

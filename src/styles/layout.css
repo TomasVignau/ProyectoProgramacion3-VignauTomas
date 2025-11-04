@@ -1,4 +1,4 @@
-nav {
+/*nav {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -19,18 +19,129 @@ nav ul {
 }
 
 .colorTextoMenu {
-  color: "#F4F3EE";
-}
+  color: #F4F3EE;
+}*/
 
 /* Cambiar color del botón de colapso */
-.ant-layout-sider-trigger {
-  background: #8A817C !important; /* color de fondo */
-  color: #F4F3EE !important; /* color del icono */
-  border-top: 3px solid #F4F3EE; /* opcional, para separar del sider */
-}
+/*.ant-layout-sider-trigger {
+  background: #8A817C !important;
+  color: #F4F3EE !important;
+  border-top: 3px solid #F4F3EE;
+}*/
 
 /* Color de fondo del item seleccionado */
-.ant-menu-dark .ant-menu-item-selected {
+/*.ant-menu-dark .ant-menu-item-selected {
   background-color: #f59140 !important;
+}*/
+
+
+/* ===== RESPONSIVE ===== */
+/*@media (max-width: 992px) {
+  .ant-layout-header .title {
+    font-size: 1.6rem;
+    text-align: center;
+    padding: 0 10px;
+  }
+
+  .ant-layout-content {
+    margin: 10px 8px !important;
+  }
+
+  .ant-layout-footer {
+    font-size: 12px;
+    padding: 10px 8px;
+  }
 }
 
+@media (max-width: 576px) {
+  .ant-layout-header .title {
+    font-size: 1.2rem;
+    padding: 0 5px;
+  }
+
+  .ant-layout-content {
+    margin: 5px 4px !important;
+  }
+
+  .ant-layout-footer {
+    font-size: 11px;
+    padding: 8px 4px;
+  }
+
+  .ant-menu-item {
+    font-size: 14px;
+  }
+}*/
+
+
+.colorTextoMenu {
+  color: #E0E0E0 !important;
+  font-weight: 500;
+  transition: color 0.3s ease;
+}
+
+.colorTextoMenu:hover {
+  color: #ffffff !important;
+}
+
+.ant-menu-item-selected {
+  background-color: rgba(255, 255, 255, 0.15) !important;
+}
+
+.ant-menu-item:hover {
+  background-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+.demo-logo-vertical {
+  height: 64px;
+  margin: 16px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+}
+
+.title {
+  margin: 0 !important;
+  font-size: clamp(1rem, 3vw, 1.5rem);
+  text-align: center;
+  padding: 0 16px;
+}
+
+.ant-menu-dark .ant-menu-item-selected {
+  background-color: #854b1b !important;
+}
+
+/* ======== RESPONSIVE ======== */
+@media (max-width: 992px) {
+  .demo-logo-vertical {
+    height: 50px;
+    margin: 12px;
+  }
+
+  .title {
+    font-size: 1.1rem;
+    padding: 0 8px;
+  }
+
+  .ant-menu {
+    font-size: 0.95rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .demo-logo-vertical {
+    height: 40px;
+    margin: 8px;
+  }
+
+  .title {
+    font-size: 1rem;
+  }
+
+  .ant-menu {
+    font-size: 0.9rem;
+  }
+
+  .ant-menu-item {
+    padding: 8px 12px !important;
+  }
+}
