@@ -28,7 +28,7 @@ const empresas: Record<
     sitioWeb: "https://datadesign.com.ar",
     categoria: "Base de Datos",
   },
-  "SoftDesign Corp": {
+  "Empresa Alpha": {
     descripcion: "Desarrolladora de soluciones de software a medida para entornos comerciales. Creamos herramientas flexibles y eficientes.",
     ubicacion: "Rosario, Argentina",
     sitioWeb: "https://softdesigncorp.com",

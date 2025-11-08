@@ -1,38 +1,60 @@
 import "../../styles/registrar.css";
 import { Form, Input, Select, Button } from "antd";
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { RolesFormValues } from "../../types/rolesFormValues";
+import UserFormValues from "../../types/userFormValues";
 
 const { Option } = Select;
 
-interface GovernmentId {
-  type?: "cuil" | "cuit" | "dni" | "lc" | "le" | "pas";
-  number?: string;
-}
-interface UserFormValues {
-  email: string;
-  password: string;
-  role: string;
-  name: string;
-  phone?: string;
-  description?: string;
-  governmentId?: GovernmentId;
-  isActive: boolean;
-}
 interface UserFormProps {
   initialValues?: Partial<UserFormValues>;
   onSubmit: (values: UserFormValues) => void;
 }
 
-export const Registrar = ({ initialValues, onSubmit }: UserFormProps) => {
+export const Registrar = ({ initialValues }: UserFormProps) => {
+  const navigate = useNavigate();
   const [form] = Form.useForm();
   const [roles, setRoles] = useState<RolesFormValues[]>([]);
 
   const governmentIdTypes = ["cuil", "cuit", "dni", "lc", "le", "pas"];
 
-  const onFinish = (values: UserFormValues) => {
-    onSubmit(values);
+  const onFinish = async (values: UserFormValues): Promise<void> => {
+    try {
+      const token = localStorage.getItem("token");
+
+      const response = await fetch("http://localhost:4000/users/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token ?? ""}`,
+        },
+        body: JSON.stringify({
+          ...values,
+        }),
+      });
+
+      if (!response.ok) {
+        // Intentamos leer el mensaje del backend
+        const errorMessage = await response.text();
+        throw new Error(errorMessage || `Error HTTP ${response.status}`);
+      }
+
+      const createdUser: UserFormValues = await response.json();
+      console.log("Usuario creado correctamente:", createdUser);
+      alert("Usuario creado correctamente");
+
+      form.resetFields();
+      navigate("/");
+    } catch (error) {
+      if (error instanceof Error) {
+        console.error("Error al crear el usuario:", error.message);
+        alert(error.message);
+      } else {
+        console.error("Error desconocido al crear el usuario:", error);
+        alert("Error desconocido al crear el usuario");
+      }
+    }
   };
 
   useEffect(() => {
@@ -64,21 +86,24 @@ export const Registrar = ({ initialValues, onSubmit }: UserFormProps) => {
           form={form}
           layout="vertical"
           initialValues={initialValues}
-          onFinish={onFinish}
+          onFinish={(values) => {
+            console.log("onFinish ejecutado con:", values);
+            onFinish(values);
+          }}
         >
-          <Form.Item label="Nombre" name="name">
+          <Form.Item label="Nombre" name="name" required={true}>
             <Input placeholder="Nombre completo" />
           </Form.Item>
 
-          <Form.Item label="Email" name="email">
+          <Form.Item label="Email" name="email" required={true}>
             <Input placeholder="usuario@mail.com" />
           </Form.Item>
 
-          <Form.Item label="Contraseña" name="password">
+          <Form.Item label="Contraseña" name="password" required={true}>
             <Input.Password placeholder="Contraseña" />
           </Form.Item>
 
-          <Form.Item label="Rol" name="role">
+          <Form.Item label="Rol" name="role" required={true}>
             <Select placeholder="Seleccione un rol">
               {roles.map((role) => (
                 <Option key={role._id} value={role.name}>
@@ -96,7 +121,11 @@ export const Registrar = ({ initialValues, onSubmit }: UserFormProps) => {
             <Input.TextArea placeholder="Descripción opcional" rows={3} />
           </Form.Item>
 
-          <Form.Item label="Tipo de documento" name={["governmentId", "type"]}>
+          <Form.Item
+            label="Tipo de documento"
+            name={["governmentId", "type"]}
+            required={true}
+          >
             <Select placeholder="Seleccione tipo de documento">
               {governmentIdTypes.map((type) => (
                 <Option key={type} value={type}>
@@ -109,16 +138,15 @@ export const Registrar = ({ initialValues, onSubmit }: UserFormProps) => {
           <Form.Item
             label="Número de documento"
             name={["governmentId", "number"]}
+            required={true}
           >
             <Input placeholder="Número de documento" />
           </Form.Item>
 
           <Form.Item>
-            <Link to="/">
-              <Button type="primary" htmlType="submit">
-                Guardar
-              </Button>
-            </Link>
+            <Button type="primary" htmlType="submit">
+              Guardar
+            </Button>
           </Form.Item>
         </Form>
       </div>

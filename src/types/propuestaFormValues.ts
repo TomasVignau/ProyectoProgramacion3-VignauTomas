@@ -1,13 +1,19 @@
+export interface IUserRef {
+  _id: string
+  name: string
+}
+
 export interface PropuestaFormValues {
-  idPropuesta: number;
-  titulo: string;
-  idEmpresa: number;
-  idDesafio: number;
-  idEmprendedor: number;
-  categoria: string;
-  fechaPublicacion: Date;
-  estado: boolean;
-  valoracion: number;
-  devolucion: string;
-  isActive: boolean;
+  _id: string
+  title: string
+  description: string
+  idUser: string | IUserRef
+  idCompany: string | IUserRef
+  idChallenge: string
+  category: string
+  publicationDate: Date
+  state: string
+  valoration?: number
+  feedback?: string
+  isActive: boolean
 }

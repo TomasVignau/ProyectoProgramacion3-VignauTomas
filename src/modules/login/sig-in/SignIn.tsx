@@ -1,10 +1,8 @@
 import * as React from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
-import Checkbox from "@mui/material/Checkbox";
 import CssBaseline from "@mui/material/CssBaseline";
-import FormControlLabel from "@mui/material/FormControlLabel";
 import Divider from "@mui/material/Divider";
 import FormLabel from "@mui/material/FormLabel";
 import FormControl from "@mui/material/FormControl";
@@ -59,10 +57,6 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
   const [passwordErrorMessage, setPasswordErrorMessage] = React.useState("");
   const [open, setOpen] = React.useState(false);
   const navigate = useNavigate();
-  const location = useLocation();
-
-  // 🔹 Saber si estamos en la página de registro
-  const isRegisterPage = location.pathname === "/registrar";
 
   const handleClose = () => {
     setOpen(false);
@@ -70,12 +64,6 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-
-    if (isRegisterPage) {
-      // lógica para registrar (puedes agregarla después)
-      console.log("Registrar nuevo usuario");
-      return;
-    }
 
     const data = new FormData(event.currentTarget);
     const username = String(data.get("user"));
@@ -124,7 +112,7 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
               variant="h4"
               sx={{ width: "100%", fontSize: "clamp(2rem, 10vw, 2.15rem)" }}
             >
-              {isRegisterPage ? "Registrar" : "Inicio de Sesión"}
+              Inicio de Sesión
             </Typography>
 
             <Box
@@ -173,17 +161,10 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
                 />
               </FormControl>
 
-              {!isRegisterPage && (
-                <FormControlLabel
-                  control={<Checkbox value="remember" color="primary" />}
-                  label="Remember me"
-                />
-              )}
-
               <ForgotPassword open={open} handleClose={handleClose} />
 
               <Button type="submit" fullWidth variant="contained">
-                {isRegisterPage ? "Registrar" : "Iniciar Sesión"}
+                Iniciar Sesión
               </Button>
             </Box>
 
@@ -191,21 +172,14 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
 
             <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
               <Typography sx={{ textAlign: "center" }}>
-                {isRegisterPage ? (
-                  <>
-                    ¿Ya tienes cuenta?{" "}
-                    <Link href="/" variant="body2">
-                      Inicia sesión
-                    </Link>
-                  </>
-                ) : (
+                {
                   <>
                     ¿No tienes cuenta?{" "}
                     <Link href="/registrar" variant="body2">
                       Regístrate
                     </Link>
                   </>
-                )}
+                }
               </Typography>
             </Box>
           </Card>

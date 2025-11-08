@@ -25,7 +25,7 @@ export const DesafiosPublicados = () => {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiIwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAiLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE3NjEwMDg1OTcsImlzcyI6ImJhc2UtYXBpLWV4cHJlc3MtZ2VuZXJhdG9yIiwic3ViIjoiMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwIn0.p4MOoTviDgqfnueyXNnBt-EByQ4wJ__Xz9L9SrsDaPU'}`,
+        Authorization: `Bearer ${"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiIwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAiLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE3NjEwMDg1OTcsImlzcyI6ImJhc2UtYXBpLWV4cHJlc3MtZ2VuZXJhdG9yIiwic3ViIjoiMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwIn0.p4MOoTviDgqfnueyXNnBt-EByQ4wJ__Xz9L9SrsDaPU"}`,
       },
     })
       .then(async (res) => {
@@ -52,10 +52,8 @@ export const DesafiosPublicados = () => {
     );
   }, [busqueda, desafios]);
 
-  // 🔹 Renderizado
   return (
     <div className="divDesafios" style={{ display: "grid", gap: 24 }}>
-      {/* Campo de búsqueda */}
       <Input
         size="large"
         placeholder="Buscar desafío por nombre o descripción..."
@@ -72,7 +70,6 @@ export const DesafiosPublicados = () => {
         allowClear
       />
 
-      {/* Loader */}
       {isLoading ? (
         <div style={{ textAlign: "center", padding: "60px 0" }}>
           <Spin size="large" tip="Cargando desafíos..." />
@@ -97,7 +94,7 @@ export const DesafiosPublicados = () => {
             extra={
               <Link
                 to={`/emprendedor/empresa/${encodeURIComponent(
-                  desafio.idCompany
+                  desafio.idCompany.name
                 )}`}
                 style={{
                   color: "#BC6C25",
@@ -105,7 +102,7 @@ export const DesafiosPublicados = () => {
                   textDecoration: "none",
                 }}
               >
-                <ApartmentOutlined /> {desafio.idCompany.name.toUpperCase()}
+                <ApartmentOutlined /> {(" | ") + desafio.idCompany.name.toUpperCase()}
               </Link>
             }
           >
@@ -121,8 +118,7 @@ export const DesafiosPublicados = () => {
                 marginBottom: 12,
               }}
             >
-              Fecha límite:{" "}
-              {dayjs(desafio.expirationDate).format("DD/MM/YYYY")}
+              Fecha límite: {dayjs(desafio.expirationDate).format("DD/MM/YYYY")}
             </Tag>
 
             <Link to="/emprendedor/publicarPropuesta">

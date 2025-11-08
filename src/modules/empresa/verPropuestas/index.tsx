@@ -1,114 +1,3 @@
-/*import { Button, Table, Spin, Tag, Select } from "antd";
-import { Link } from "react-router-dom";
-import { PropuestaFormValues } from "../../../types/propuestaFormValues";
-import { useState, useEffect } from "react";
-import { content } from "../../../utils/content";
-import PropuestasData from "../../../data/propuestas.json";
-import {
-  CheckCircleOutlined,
-  SyncOutlined,
-  CloseCircleOutlined,
-} from "@ant-design/icons";
-import { ColumnsType } from "antd/es/table";
-
-export const VerPropuestasEmprendedores = () => {
-  const [propuestas, setPropuestas] = useState<PropuestaFormValues[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
-
-  useEffect(() => {
-    console.log("Obteniendo propuestas publicadas...");
-    setIsLoading(true);
-
-    const timer = setTimeout(() => {
-      setPropuestas(PropuestasData);
-      setIsLoading(false);
-    }, 2000);
-
-    return () => clearTimeout(timer);
-  }, []);
-
-  const columns: ColumnsType<PropuestaFormValues> = [
-  {
-    title: "Id-Desafio",
-    dataIndex: "idDesafio",
-    key: "idDesafio",
-    responsive: ["xs", "sm", "md", "lg", "xl"],
-  },
-  {
-    title: "Nombre Desafío",
-    dataIndex: "nombreDesafio",
-    key: "nombreDesafio",
-    responsive: ["xs", "sm", "md", "lg", "xl"],
-  },
-  {
-    title: "Nombre Empresa",
-    dataIndex: "nombreEmpresa",
-    key: "nombreEmpresa",
-    responsive: ["xs", "sm", "md", "lg", "xl"],
-  },
-  {
-    title: "Estado",
-    dataIndex: "estado",
-    key: "estado",
-    render: () => (
-      <Select
-        defaultValue="--Seleccione un estado--"
-        style={{ width: "100%", minWidth: 150 }}
-        options={[
-          {
-            value: "aceptada",
-            label: (
-              <Tag icon={<CheckCircleOutlined />} color="green">
-                Aceptada
-              </Tag>
-            ),
-          },
-          {
-            value: "pendiente",
-            label: (
-              <Tag icon={<SyncOutlined spin />} color="blue">
-                Pendiente
-              </Tag>
-            ),
-          },
-          {
-            value: "rechazada",
-            label: (
-              <Tag icon={<CloseCircleOutlined />} color="red">
-                Rechazada
-              </Tag>
-            ),
-          },
-        ]}
-        onChange={() => {
-          alert("Cambio de estado no implementado en este demo.");
-        }}
-      />
-    ),
-  },
-];
-
-  return (
-    <div style={{ padding: 20, maxWidth: "100%", overflowX: "auto" }}>
-      <h2>Listado de Propuestas</h2>
-
-      {isLoading ? (
-        <Spin tip="Cargando información de las propuestas..." size="large">
-          {content}
-        </Spin>
-      ) : (
-        <Table dataSource={propuestas} columns={columns} rowKey="idDesafio" scroll={{ x: "max-content" }}/>
-      )}
-
-      <Link to="/empresa/home">
-        <Button type="primary" style={{ width: "100%", maxWidth: 200 }}>
-          Volver al Inicio
-        </Button>
-      </Link>
-    </div>
-  );
-};*/
-
 import {
   Button,
   Table,
@@ -129,7 +18,8 @@ import {
   ApartmentOutlined,
 } from "@ant-design/icons";
 import type { ColumnsType } from "antd/es/table";
-import PropuestasData from "../../../data/propuestas.json";
+import { IUserRef } from "../../../types/propuestaFormValues";
+//import PropuestasData from "../../../data/propuestas.json";
 
 const { Title, Text } = Typography;
 
@@ -146,12 +36,24 @@ export const VerPropuestasEmprendedores = () => {
 
   useEffect(() => {
     setIsLoading(true);
-    const timer = setTimeout(() => {
-      setPropuestas(PropuestasData);
-      setIsLoading(false);
-    }, 1000);
+    fetch("http://localhost:4000/proposals", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiIwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAiLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE3NjEwMDg1OTcsImlzcyI6ImJhc2UtYXBpLWV4cHJlc3MtZ2VuZXJhdG9yIiwic3ViIjoiMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwIn0.p4MOoTviDgqfnueyXNnBt-EByQ4wJ__Xz9L9SrsDaPU"}`,
+      },
+    })
+      .then(async (res) => {
+        if (!res.ok) throw new Error("Token inválido o sin autorización");
+        const data = await res.json();
+        console.log("📦 Datos recibidos desde API:", data);
 
-    return () => clearTimeout(timer);
+        setPropuestas(data);
+      })
+      .catch((err) => {
+        console.error("Error al obtener desafíos:", err);
+      })
+      .finally(() => setIsLoading(false));
   }, []);
 
   const handleEstadoChange = (value: string, record: PropuestaFormValues) => {
@@ -168,7 +70,7 @@ export const VerPropuestasEmprendedores = () => {
   const columns: ColumnsType<PropuestaFormValues> = [
     {
       title: "ID Desafío",
-      dataIndex: "idDesafio",
+      dataIndex: "_id",
       key: "idDesafio",
       width: 120,
       render: (id: number) => (
@@ -179,7 +81,7 @@ export const VerPropuestasEmprendedores = () => {
     },
     {
       title: "Nombre del Desafío",
-      dataIndex: "nombreDesafio",
+      dataIndex: "title",
       key: "nombreDesafio",
       render: (nombre: string) => (
         <Text strong style={{ color: "#463F3A" }}>
@@ -189,25 +91,30 @@ export const VerPropuestasEmprendedores = () => {
     },
     {
       title: "Emprendedor",
-      dataIndex: "nombreEmpresa",
-      key: "nombreEmpresa",
+      dataIndex: "idUser",
+      key: "nombreEmprendedor",
       responsive: ["md"],
-      render: (nombre: string) => (
-        <Link
-          to={`/empresa/emprendedor/${encodeURIComponent(nombre)}`}
-          style={{
-            color: "#BC6C25",
-            fontWeight: 500,
-            textDecoration: "none",
-          }}
-        >
-          <ApartmentOutlined style={{ marginRight: 6 }} /> {nombre}
-        </Link>
-      ),
+      render: (user: string | IUserRef) => {
+        const nombre =
+          typeof user === "string" ? user : (user?.name ?? "Sin nombre");
+
+        return (
+          <Link
+            to={`/empresa/emprendedor/${encodeURIComponent(nombre)}`}
+            style={{
+              color: "#BC6C25",
+              fontWeight: 500,
+              textDecoration: "none",
+            }}
+          >
+            <ApartmentOutlined style={{ marginRight: 6 }} /> {nombre}
+          </Link>
+        );
+      },
     },
     {
       title: "Estado",
-      dataIndex: "estado",
+      dataIndex: "state",
       key: "estado",
       width: 200,
       render: (estado: string, record: PropuestaFormValues) => (
