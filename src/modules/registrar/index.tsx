@@ -31,6 +31,7 @@ export const Registrar = ({ initialValues }: UserFormProps) => {
         },
         body: JSON.stringify({
           ...values,
+          company: null,
         }),
       });
 
@@ -63,7 +64,7 @@ export const Registrar = ({ initialValues }: UserFormProps) => {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiIwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAiLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE3NjEwMDg1OTcsImlzcyI6ImJhc2UtYXBpLWV4cHJlc3MtZ2VuZXJhdG9yIiwic3ViIjoiMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwIn0.p4MOoTviDgqfnueyXNnBt-EByQ4wJ__Xz9L9SrsDaPU"}`, // 👈 así se envía el token
+        //Authorization: `Bearer ${token ?? ""}`, // 👈 si tu API lo requiere
       },
     })
       .then(async (res) => {

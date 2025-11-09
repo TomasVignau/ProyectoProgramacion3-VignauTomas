@@ -1,14 +1,11 @@
-export interface IUserRef {
-  _id: string
-  name: string
-}
+import UserFormValues from "./userFormValues"
 
 export interface PropuestaFormValues {
   _id: string
   title: string
   description: string
-  idUser: string | IUserRef
-  idCompany: string | IUserRef
+  idUser: UserFormValues
+  idCompany: UserFormValues
   idChallenge: string
   category: string
   publicationDate: Date

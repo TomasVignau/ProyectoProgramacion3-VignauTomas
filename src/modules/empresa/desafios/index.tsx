@@ -20,19 +20,26 @@ export const DesafiosEmpresa = () => {
 
 
   useEffect(() => {
-    //const token = localStorage.getItem("token") // 👈 o donde lo tengas guardado
+    const token = localStorage.getItem("token");
+    const empresa = localStorage.getItem("user");
+    const empresaId = empresa ? JSON.parse(empresa)._id : null;
+
+    console.log("Empresa ID:", empresaId);
+    console.log("Token:", token);
+
     setIsLoading(true);
-    fetch("http://localhost:4000/challenges", {
+
+    fetch(`http://localhost:4000/challenges/company/${empresaId}`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiIwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAiLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE3NjEwMDg1OTcsImlzcyI6ImJhc2UtYXBpLWV4cHJlc3MtZ2VuZXJhdG9yIiwic3ViIjoiMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwIn0.p4MOoTviDgqfnueyXNnBt-EByQ4wJ__Xz9L9SrsDaPU'}`, // 👈 así se envía el token
+        Authorization: `Bearer ${token ?? ""}`,
       },
     })
       .then(async (res) => {
         if (!res.ok) throw new Error("Token inválido o sin autorización")
         const data = await res.json()
-        console.log("📦 Datos recibidos desde API:", data);
+        console.log("Datos recibidos desde API:", data);
         setDesafios(data)
         setIsLoading(false);
       })
@@ -85,8 +92,8 @@ export const DesafiosEmpresa = () => {
       dataIndex: "acciones",
       key: "acciones",
       width: 180,
-      render: () => (
-        <Link to="/empresa/verPropuestas">
+      render: (_, record) => (
+        <Link to={`/empresa/verPropuestas/${record._id}`}>
           <Button
             type="primary"
             icon={<EyeOutlined />}

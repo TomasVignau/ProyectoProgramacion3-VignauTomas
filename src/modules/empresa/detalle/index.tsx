@@ -1,51 +1,40 @@
 import { useParams } from "react-router-dom";
 import { Card, Typography, Button, Space, Tag } from "antd";
-import { EnvironmentOutlined, GlobalOutlined, ArrowLeftOutlined } from "@ant-design/icons";
+import {
+  ArrowLeftOutlined,
+} from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
-import "../../../styles/empresaDetalle.css";
+import "../../../styles/detalle.css";
+import { useEffect, useState } from "react";
+import UserFormValues from "../../../types/userFormValues";
 
-const { Title, Text, Paragraph } = Typography;
-
-const empresas: Record<
-  string,
-  { descripcion: string; ubicacion: string; sitioWeb: string; categoria: string }
-> = {
-  "MathSolutions SA": {
-    descripcion: "Empresa especializada en soluciones matemáticas y análisis de datos. Ofrecemos consultoría en estadística aplicada, IA y modelado predictivo.",
-    ubicacion: "Buenos Aires, Argentina",
-    sitioWeb: "https://mathsolutions.com.ar",
-    categoria: "Ciencia de Datos",
-  },
-  "ReactDev Company": {
-    descripcion: "Consultora dedicada al desarrollo web moderno con React, TypeScript y herramientas de diseño de experiencia de usuario.",
-    ubicacion: "Córdoba, Argentina",
-    sitioWeb: "https://reactdev.io",
-    categoria: "Desarrollo Web",
-  },
-  "DataDesign Ltd": {
-    descripcion: "Empresa enfocada en diseño y modelado de bases de datos empresariales, integrando soluciones escalables y seguras.",
-    ubicacion: "Mendoza, Argentina",
-    sitioWeb: "https://datadesign.com.ar",
-    categoria: "Base de Datos",
-  },
-  "Empresa Alpha": {
-    descripcion: "Desarrolladora de soluciones de software a medida para entornos comerciales. Creamos herramientas flexibles y eficientes.",
-    ubicacion: "Rosario, Argentina",
-    sitioWeb: "https://softdesigncorp.com",
-    categoria: "Software Empresarial",
-  },
-  "MathLab SA": {
-    descripcion: "Compañía dedicada a la investigación y desarrollo en matemáticas aplicadas y estadísticas, colaborando con instituciones científicas.",
-    ubicacion: "La Plata, Argentina",
-    sitioWeb: "https://mathlabsa.com",
-    categoria: "Investigación",
-  },
-};
+const { Title, Paragraph } = Typography;
 
 export default function EmpresaDetalle() {
-  const { nombreEmpresa } = useParams<{ nombreEmpresa?: string }>();
-  const empresa = nombreEmpresa ? empresas[nombreEmpresa] : undefined;
+  const { idUser } = useParams<{ idUser: string }>();
+  const token = localStorage.getItem("token");  
   const navigate = useNavigate();
+  const [empresa, setEmpresa] = useState<UserFormValues>();
+
+  useEffect(() => {
+    fetch(`http://localhost:4000/proposals/challenge/${idUser}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token ?? ""}`,
+      },
+    })
+      .then(async (res) => {
+        if (!res.ok) throw new Error("Token inválido o sin autorización");
+        const data = await res.json();
+        console.log("📦 Datos recibidos desde API:", data);
+
+        setEmpresa(data);
+      })
+      .catch((err) => {
+        console.error("Error al obtener desafíos:", err);
+      })
+  }, [idUser]);
 
   if (!empresa) {
     return (
@@ -68,36 +57,20 @@ export default function EmpresaDetalle() {
     <div className="empresaContainer">
       <div className="empresaHeader">
         <Title level={2} className="empresaTitulo">
-          {nombreEmpresa}
+          {empresa.name}
         </Title>
-        <Tag color="#463F3A">{empresa.categoria}</Tag>
+        <Tag color="#463F3A">{empresa.email}</Tag>
       </div>
 
       <Card bordered={false} className="empresaCard" hoverable>
         <Space direction="vertical" size="middle" style={{ width: "100%" }}>
           <Paragraph className="empresaDescripcion">
-            {empresa.descripcion}
+            {empresa.description}
           </Paragraph>
-
-          <Space align="center">
-            <EnvironmentOutlined style={{ color: "#463F3A" }} />
-            <Text strong>{empresa.ubicacion}</Text>
-          </Space>
-
-          <Button
-            type="primary"
-            icon={<GlobalOutlined />}
-            href={empresa.sitioWeb}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="empresaBoton"
-          >
-            Visitar sitio web
-          </Button>
 
           <Button
             icon={<ArrowLeftOutlined />}
-            onClick={() => navigate("/emprendedor/desafiosPublicados")}
+            onClick={() => navigate(-1)}
             className="volverBtn"
           >
             Volver

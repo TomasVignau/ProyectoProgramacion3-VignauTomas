@@ -1,56 +1,44 @@
 import { useParams } from "react-router-dom";
 import { Card, Typography, Button, Space, Tag } from "antd";
-import { EnvironmentOutlined, GlobalOutlined, ArrowLeftOutlined } from "@ant-design/icons";
+import { ArrowLeftOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
-import "../../../styles/empresaDetalle.css";
+import "../../../styles/detalle.css";
+import { useState, useEffect } from "react";
+import UserFormValues from "../../../types/userFormValues";
 
-const { Title, Text, Paragraph } = Typography;
-
-const emprendedores: Record<
-  string,
-  { descripcion: string; ubicacion: string; link: string; area: string }
-> = {
-  "Sofía Ramírez": {
-    descripcion: "Ingeniera de software especializada en desarrollo web con React y Node.js. Apasionada por proyectos de código abierto.",
-    ubicacion: "Buenos Aires, Argentina",
-    link: "https://github.com/sofiaramirez",
-    area: "Desarrollo Web",
-  },
-  "Martín López": {
-    descripcion: "Data Scientist con experiencia en análisis predictivo, machine learning y visualización de datos. Mentor en comunidades de IA.",
-    ubicacion: "Córdoba, Argentina",
-    link: "https://www.linkedin.com/in/martinlopezds/",
-    area: "Ciencia de Datos",
-  },
-  "Lucía Fernández": {
-    descripcion: "Diseñadora UX/UI que crea experiencias digitales intuitivas y atractivas, trabajando con startups y emprendimientos.",
-    ubicacion: "Mendoza, Argentina",
-    link: "https://www.linkedin.com/in/luciafernandezux/",
-    area: "Diseño UX/UI",
-  },
-  "Tomás Vignau": {
-    descripcion: "Full Stack Developer especializado en Flutter y aplicaciones móviles. Creador de proyectos educativos y herramientas de productividad.",
-    ubicacion: "Rosario, Argentina",
-    link: "https://github.com/tomasvignau",
-    area: "Desarrollo Móvil",
-  },
-  "Valentina Gómez": {
-    descripcion: "Investigadora en Inteligencia Artificial y Machine Learning, con foco en NLP y modelos generativos aplicados a la educación.",
-    ubicacion: "La Plata, Argentina",
-    link: "https://www.linkedin.com/in/valentinagomezai/",
-    area: "Investigación en IA",
-  },
-};
-
+const { Title, Paragraph } = Typography;
 
 export default function EmprendedorDetalle() {
-  const { nombreEmprendedor } = useParams<{ nombreEmprendedor?: string }>();
-  const emprendedor = nombreEmprendedor ? emprendedores[nombreEmprendedor] : undefined;
+
   const navigate = useNavigate();
+  const { idUser } = useParams<{ idUser: string }>();
+  const token = localStorage.getItem("token");  
+  const [emprendedor, setEmprendedor] = useState<UserFormValues>();
+
+  console.log("ID Emprendedor:", idUser);
+
+  useEffect(() => {
+    fetch(`http://localhost:4000/proposals/users/${idUser}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token ?? ""}`,
+      },
+    })
+      .then(async (res) => {
+        if (!res.ok) throw new Error("Token inválido o sin autorización");
+        const data = await res.json();
+        console.log("Tipo de role.name:", typeof data.role?.name, "valor:", data.role?.name);
+        setEmprendedor(data);
+      })
+      .catch((err) => {
+        console.error("Error al obtener desafíos:", err);
+      })
+  }, [idUser]);
 
   if (!emprendedor) {
     return (
-      <div className="empresaNotFound">
+      <div className="emprendedorNotFound">
         <Title level={3} style={{ color: "#b23a48" }}>
           Emprendedor no encontrado
         </Title>
@@ -66,39 +54,23 @@ export default function EmprendedorDetalle() {
   }
 
   return (
-    <div className="empresaContainer">
-      <div className="empresaHeader">
-        <Title level={2} className="empresaTitulo">
-          {nombreEmprendedor}
+    <div className="emprendedorContainer">
+      <div className="emprendedorHeader">
+        <Title level={2} className="emprendedorTitulo">
+          {emprendedor.name}
         </Title>
-        <Tag color="#463F3A">{emprendedor.area}</Tag>
+        <Tag color="#463F3A">{emprendedor.email}</Tag>
       </div>
 
-      <Card bordered={false} className="empresaCard" hoverable>
+      <Card bordered={false} className="emprendedorCard" hoverable>
         <Space direction="vertical" size="middle" style={{ width: "100%" }}>
-          <Paragraph className="empresaDescripcion">
-            {emprendedor.descripcion}
+          <Paragraph className="emprendedorDescripcion">
+            {emprendedor.description}
           </Paragraph>
-
-          <Space align="center">
-            <EnvironmentOutlined style={{ color: "#463F3A" }} />
-            <Text strong>{emprendedor.ubicacion}</Text>
-          </Space>
-
-          <Button
-            type="primary"
-            icon={<GlobalOutlined />}
-            href={emprendedor.link}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="empresaBoton"
-          >
-            Visitar sitio web
-          </Button>
 
           <Button
             icon={<ArrowLeftOutlined />}
-            onClick={() => navigate("/empresa/verPropuestas")}
+            onClick={() => navigate(-1)}
             className="volverBtn"
           >
             Volver

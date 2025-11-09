@@ -8,7 +8,7 @@ import {
   Space,
   Typography,
 } from "antd";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
 import {
   CheckCircleOutlined,
@@ -18,7 +18,7 @@ import {
   ApartmentOutlined,
 } from "@ant-design/icons";
 import type { ColumnsType } from "antd/es/table";
-import { IUserRef } from "../../../types/propuestaFormValues";
+import UserFormValues from "../../../types/userFormValues";
 //import PropuestasData from "../../../data/propuestas.json";
 
 const { Title, Text } = Typography;
@@ -31,16 +31,18 @@ interface PropuestaFormValues {
 }
 
 export const VerPropuestasEmprendedores = () => {
+  const { idChallenge } = useParams<{ idChallenge: string }>();
+  const token = localStorage.getItem("token");
   const [propuestas, setPropuestas] = useState<PropuestaFormValues[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     setIsLoading(true);
-    fetch("http://localhost:4000/proposals", {
+    fetch(`http://localhost:4000/proposals/challenge/${idChallenge}`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiIwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAiLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE3NjEwMDg1OTcsImlzcyI6ImJhc2UtYXBpLWV4cHJlc3MtZ2VuZXJhdG9yIiwic3ViIjoiMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwIn0.p4MOoTviDgqfnueyXNnBt-EByQ4wJ__Xz9L9SrsDaPU"}`,
+        Authorization: `Bearer ${token ?? ""}`,
       },
     })
       .then(async (res) => {
@@ -54,7 +56,7 @@ export const VerPropuestasEmprendedores = () => {
         console.error("Error al obtener desafíos:", err);
       })
       .finally(() => setIsLoading(false));
-  }, []);
+  }, [idChallenge]);
 
   const handleEstadoChange = (value: string, record: PropuestaFormValues) => {
     setPropuestas((prev) =>
@@ -94,20 +96,19 @@ export const VerPropuestasEmprendedores = () => {
       dataIndex: "idUser",
       key: "nombreEmprendedor",
       responsive: ["md"],
-      render: (user: string | IUserRef) => {
-        const nombre =
-          typeof user === "string" ? user : (user?.name ?? "Sin nombre");
+      render: (user: UserFormValues) => {
+        const id = typeof user === "string" ? user : user?._id;
 
         return (
           <Link
-            to={`/empresa/emprendedor/${encodeURIComponent(nombre)}`}
+            to={`/empresa/emprendedor/${id}`}
             style={{
               color: "#BC6C25",
               fontWeight: 500,
               textDecoration: "none",
             }}
           >
-            <ApartmentOutlined style={{ marginRight: 6 }} /> {nombre}
+            <ApartmentOutlined style={{ marginRight: 6 }} /> {user.name}
           </Link>
         );
       },

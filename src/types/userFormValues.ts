@@ -1,6 +1,7 @@
 import GovernmentId from "./governmetnIDTypes";
 
 interface UserFormValues {
+  _id: string;
   email: string;
   password: string;
   role: string;

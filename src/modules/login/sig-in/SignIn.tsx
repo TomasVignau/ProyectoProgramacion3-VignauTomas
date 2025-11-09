@@ -45,11 +45,6 @@ const SignInContainer = styled(Stack)(({ theme }) => ({
   },
 }));
 
-const users = [
-  { username: "empresa", password: "123", role: "empresa" },
-  { username: "emprendedor", password: "123", role: "emprendedor" },
-];
-
 export default function SignIn(props: { disableCustomTheme?: boolean }) {
   const [userError, setuserError] = React.useState(false);
   const [userErrorMessage, setuserErrorMessage] = React.useState("");
@@ -62,34 +57,61 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
     setOpen(false);
   };
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     const data = new FormData(event.currentTarget);
-    const username = String(data.get("user"));
+    const email = String(data.get("user")); // 👈 tu campo "user" es el email
     const password = String(data.get("password"));
 
-    const foundUser = users.find(
-      (u) => u.username === username && u.password === password
-    );
+    try {
+      const response = await fetch("http://localhost:4000/auth", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
 
-    if (!foundUser) {
-      setuserError(true);
-      setuserErrorMessage("Usuario o contraseña incorrectos.");
-      setPasswordError(true);
-      setPasswordErrorMessage("Usuario o contraseña incorrectos.");
-      return;
-    }
+      if (response.status === 400) {
+        setuserError(true);
+        setuserErrorMessage("Faltan campos obligatorios.");
+        return;
+      }
 
-    setuserError(false);
-    setuserErrorMessage("");
-    setPasswordError(false);
-    setPasswordErrorMessage("");
+      if (response.status === 401) {
+        setuserError(true);
+        setuserErrorMessage("Usuario o contraseña incorrectos.");
+        setPasswordError(true);
+        setPasswordErrorMessage("Usuario o contraseña incorrectos.");
+        return;
+      }
 
-    if (foundUser.role === "empresa") {
-      navigate("/empresa/home");
-    } else if (foundUser.role === "emprendedor") {
-      navigate("/emprendedor/home");
+      if (!response.ok) {
+        console.error("Error inesperado:", response.status);
+        return;
+      }
+
+      // Si todo está bien, obtenés el token
+      const dataResponse = await response.json();
+      console.log("Usuario autenticado:", dataResponse);
+
+      // Podés guardar el token en localStorage
+      localStorage.setItem("token", dataResponse.token);
+      localStorage.setItem("user", JSON.stringify(dataResponse.user));
+
+      // Y redirigir según el rol si tu backend lo devuelve
+      if (dataResponse.user.role === "empresa") {
+        navigate("/empresa/home");
+      } else if (dataResponse.user.role === "emprendedor") {
+        navigate("/emprendedor/home");
+      }
+
+      // Limpieza de errores
+      setuserError(false);
+      setPasswordError(false);
+      setuserErrorMessage("");
+      setPasswordErrorMessage("");
+    } catch (error) {
+      console.error("Error al autenticar:", error);
     }
   };
 

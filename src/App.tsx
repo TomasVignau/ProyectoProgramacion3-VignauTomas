@@ -46,12 +46,10 @@ export const App = () => (
           <Route path="home" element={<HomeEmpresa />} />
           <Route path="formulario" element={<FormularioEmpresa />} />
           <Route path="desafios" element={<DesafiosEmpresa />} />
+          <Route path="verPropuestas/:idChallenge" element={<VerPropuestasEmprendedores />} />
+
           <Route
-            path="verPropuestas"
-            element={<VerPropuestasEmprendedores />}
-          />
-          <Route
-            path="emprendedor/:nombreEmprendedor"
+            path="emprendedor/:idUser"
             element={<EmprendedorDetalle />}
           />
         </Route>
