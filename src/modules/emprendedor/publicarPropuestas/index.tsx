@@ -1,46 +1,3 @@
-/*import { Form, Input, Button } from "antd";
-
-const { TextArea } = Input;
-
-export const PublicarPropuesta = () => {
-
-  return (
-    <div style={{ maxWidth: 500, margin: "40px auto", padding: "20px" }}>
-      <h1 style={{ textAlign: "center" }}>Publicar Desafío</h1>
-
-      <Form layout="vertical">
-        <Form.Item
-          label="Título"
-          name="titulo"
-          rules={[{ required: true, message: "Ingresá un título" }]}
-        >
-          <Input placeholder="Ejemplo: Desafío de innovación" />
-        </Form.Item>
-
-        <Form.Item
-          label="Descripción"
-          name="descripcion"
-          rules={[{ required: true, message: "Ingresá una descripción" }]}
-        >
-          <TextArea rows={4} placeholder="Describí brevemente el desafío..." />
-        </Form.Item>
-
-        <Form.Item>
-          <Button
-            type="primary"
-            htmlType="submit"
-            style={{ backgroundColor: "#463F3A"}}
-            block
-            onClick={() => alert("Propuesta Publicada")}
-          >
-            Publicar
-          </Button>
-        </Form.Item>
-      </Form>
-    </div>
-  );
-};*/
-
 import "../../../styles/formulario.css";
 import { useState } from "react";
 import {
@@ -56,13 +13,14 @@ import {
 } from "antd";
 import { UploadOutlined, SendOutlined } from "@ant-design/icons";
 import type { UploadProps } from "antd";
+import { useLocation } from "react-router-dom";
 
 const { Title, Text } = Typography;
 const { TextArea } = Input;
 
 interface PropuestaFormValues {
-  titulo: string;
-  descripcion: string;
+  title: string;
+  description: string;
   archivo?: string;
 }
 
@@ -70,7 +28,84 @@ export const PublicarPropuesta = () => {
   const [progress, setProgress] = useState(0);
   const [form] = Form.useForm();
 
-  const fields: (keyof PropuestaFormValues)[] = ["titulo", "descripcion"];
+  const location = useLocation();
+  const { desafio } = location.state || {}; // desafío que viene del estado
+
+  const fields: (keyof PropuestaFormValues)[] = ["title", "description"];
+
+  const onFinish = async (values: PropuestaFormValues): Promise<void> => {
+    try {
+      const token = localStorage.getItem("token");
+      const userStorage = localStorage.getItem("user");
+      const usuario = userStorage
+        ? JSON.parse(userStorage)
+        : { _id: "", idCompany: "" };
+
+      console.log("Usuario desde localStorage:", usuario);
+
+      const payload = {
+        ...values,
+        idCompany: desafio?.idCompany._id,
+        idUser: usuario._id,
+        idChallenge: desafio?._id,
+        publicationDate: new Date().toISOString(),
+      };
+
+      console.log("Payload a enviar:", payload);
+
+      const response = await fetch("http://localhost:4000/proposals/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token ?? ""}`,
+        },
+        body: JSON.stringify(payload),
+      });
+
+      if (!response.ok) {
+        const errorMessage = await response.text();
+        throw new Error(errorMessage || `Error HTTP ${response.status}`);
+      }
+
+      const createdForm = await response.json();
+      console.log("Propuesta creada correctamente:", createdForm);
+      alert("Propuesta publicada correctamente");
+
+      // ------------------------------------------
+      // 👉 AGREGADO: Enviar UNA notificación solo a la empresa
+      await fetch("http://localhost:4000/notification/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token ?? ""}`,
+        },
+        body: JSON.stringify({
+          idEmprendedor: usuario._id,
+          idCompany: desafio?.idCompany._id,
+          typeNotification: "propuestaRecibida",
+          idChallenge: desafio?._id,
+        }),
+      });
+      /*console.log("IdEmprendedor: ", usuario._id);
+      console.log("IdCompany: ", desafio?.idCompany._id,);
+      console.log("TypeNotification: ", "propuestaRecibida");
+      console.log("IdChallengue: ", createdForm._id);*/
+      alert("Propuesta y notificación enviada");
+
+      // ------------------------------------------
+
+      form.resetFields();
+      setProgress(0);
+    } catch (error) {
+      if (error instanceof Error) {
+        console.error("Error al crear la propuesta:", error.message);
+        message.error(error.message);
+      } else {
+        console.error("Error desconocido al crear la propuesta:", error);
+        message.error("Error desconocido al crear la propuesta");
+      }
+    }
+  };
 
   const handleValuesChange = (
     _changedValues: Partial<PropuestaFormValues>,
@@ -99,16 +134,6 @@ export const PublicarPropuesta = () => {
     },
   };
 
-  const handleSubmit = () => {
-    if (progress === 100) {
-      message.success("Propuesta publicada exitosamente");
-      form.resetFields();
-      setProgress(0);
-    } else {
-      message.warning("Por favor completá todos los campos requeridos");
-    }
-  };
-
   return (
     <div className="divStyle">
       <Space direction="vertical" size="large" style={{ width: "100%" }}>
@@ -118,7 +143,8 @@ export const PublicarPropuesta = () => {
             Publicar Nueva Propuesta
           </Title>
           <Text type="secondary">
-            Completá el formulario para enviar tu propuesta a un desafío
+            {"Completá el formulario para enviar tu propuesta para " +
+              (desafio?.title || "")}
           </Text>
         </div>
 
@@ -144,19 +170,28 @@ export const PublicarPropuesta = () => {
           form={form}
           layout="vertical"
           onValuesChange={handleValuesChange}
+          onFinish={onFinish}
           size="large"
         >
           <Form.Item
             label="Título de la propuesta"
-            name="titulo"
+            name="title"
             rules={[{ required: true, message: "Ingresá un título" }]}
           >
             <Input placeholder="Ej: Solución innovadora para energía solar" />
           </Form.Item>
 
           <Form.Item
+            label="Categoría de la propuesta"
+            name="category"
+            initialValue={desafio?.category}
+          >
+            <Input disabled />
+          </Form.Item>
+
+          <Form.Item
             label="Descripción"
-            name="descripcion"
+            name="description"
             rules={[{ required: true, message: "Ingresá una descripción" }]}
           >
             <TextArea
@@ -184,7 +219,6 @@ export const PublicarPropuesta = () => {
               block
               size="large"
               icon={<SendOutlined />}
-              onClick={handleSubmit}
             >
               PUBLICAR PROPUESTA
             </Button>

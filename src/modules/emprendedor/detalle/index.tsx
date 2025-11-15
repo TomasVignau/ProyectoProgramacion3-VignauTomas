@@ -64,7 +64,7 @@ export default function EmprendedorDetalle() {
 
       <Card bordered={false} className="emprendedorCard" hoverable>
         <Space direction="vertical" size="middle" style={{ width: "100%" }}>
-          <Paragraph className="emprendedorDescripcion">
+          <Paragraph style={{ textAlign: "center"}} className="emprendedorDescripcion">
             {emprendedor.description}
           </Paragraph>
 

@@ -1,54 +1,3 @@
-/*.estiloHora {
-  margin-top: 20px;
-  padding: 20px;
-  border: 1px solid #ccc;
-  border-radius: 10px;
-  display: inline-block;
-  background: #f9f9f9;
-  font-weight: bold;
-  font-size: 25px;
-}
-
-
-.estiloCarousel {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background: transparent;
-  height: 250px;
-  overflow: hidden;
-}
-
-.estiloCarousel img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  border-radius: 15px;
-}*/
-
-/* ===== RESPONSIVE ===== */
-/*@media (max-width: 992px) {
-  .estiloHora {
-    font-size: 20px;
-    padding: 15px;
-  }
-
-  .estiloCarousel {
-    height: 200px;
-  }
-}
-
-@media (max-width: 576px) {
-  .estiloHora {
-    font-size: 16px;
-    padding: 10px;
-  }
-
-  .estiloCarousel {
-    height: 150px;
-  }
-}*/
-
 /* ======== CONTENEDOR PRINCIPAL ======== */
 .home-container {
   width: 100%;
@@ -61,7 +10,7 @@
 }
 
 .home-container.emprendedor {
-  background: #f9f7f4; /* tono más cálido o distinto */
+  background: #f9f7f4;
 }
 
 .home-content {

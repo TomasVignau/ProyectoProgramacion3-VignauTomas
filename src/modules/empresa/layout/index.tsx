@@ -1,6 +1,14 @@
 import "../../../styles/layout.css";
 import { FC, useEffect, useState } from "react";
-import { Layout, Menu, Typography, Dropdown, Avatar, Space } from "antd";
+import {
+  Layout,
+  Menu,
+  Typography,
+  Dropdown,
+  Avatar,
+  Space,
+  Breadcrumb,
+} from "antd";
 import {
   HomeOutlined,
   PlusCircleOutlined,
@@ -10,6 +18,7 @@ import {
   ClockCircleOutlined,
   MenuFoldOutlined,
   MenuUnfoldOutlined,
+  EyeOutlined,
 } from "@ant-design/icons";
 import { Outlet, Link, useLocation } from "react-router-dom";
 import type { MenuProps } from "antd";
@@ -39,6 +48,26 @@ export const LayoutCustomEmpresa: FC = () => {
   const [usuario, setUsuario] = useState<{ name: string }>({
     name: "Invitado",
   });
+
+  const [desafioId, setDesafioId] = useState<string | null>(null);
+
+  useEffect(() => {
+    // 1️⃣ Si la URL es /empresa/verPropuestas/:idDesafio → guardamos ese id
+    const matchDesafio = location.pathname.match(
+      /\/empresa\/verPropuestas\/([a-f0-9]{24})$/
+    );
+    if (matchDesafio) {
+      const idDesafio = matchDesafio[1];
+      setDesafioId(idDesafio);
+      localStorage.setItem("desafioId", idDesafio);
+    }
+
+    // 2️⃣ Si estamos en /detalle/... → recuperamos el id del desafío desde localStorage
+    if (location.pathname.includes("/detalle")) {
+      const storedId = localStorage.getItem("desafioId");
+      if (storedId) setDesafioId(storedId);
+    }
+  }, [location.pathname]);
 
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
@@ -123,35 +152,6 @@ export const LayoutCustomEmpresa: FC = () => {
             flexDirection: "column",
           }}
         >
-          <div
-            style={{
-              padding: "24px 16px",
-              textAlign: "center",
-              borderBottom: "1px solid rgba(255, 255, 255, 0.1)",
-            }}
-          >
-            {!collapsed && (
-              <Title
-                level={4}
-                style={{ color: "#E0E0E0", margin: 0, fontWeight: 700 }}
-              >
-                EMPRESA
-              </Title>
-            )}
-          </div>
-
-          <Menu
-            theme="dark"
-            selectedKeys={[location.pathname]}
-            mode="inline"
-            items={items}
-            style={{
-              background: "transparent",
-              flex: 1,
-              border: "none",
-            }}
-          />
-
           <Dropdown
             menu={menuUsuario}
             placement="topCenter"
@@ -208,6 +208,34 @@ export const LayoutCustomEmpresa: FC = () => {
               </Space>
             </div>
           </Dropdown>
+          <div
+            style={{
+              padding: "24px 16px",
+              textAlign: "center",
+              borderBottom: "1px solid rgba(255, 255, 255, 0.1)",
+            }}
+          >
+            {!collapsed && (
+              <Title
+                level={4}
+                style={{ color: "#E0E0E0", margin: 0, fontWeight: 700 }}
+              >
+                EMPRESA
+              </Title>
+            )}
+          </div>
+
+          <Menu
+            theme="dark"
+            selectedKeys={[location.pathname]}
+            mode="inline"
+            items={items}
+            style={{
+              background: "transparent",
+              flex: 1,
+              border: "none",
+            }}
+          />
         </div>
       </Sider>
 
@@ -254,6 +282,133 @@ export const LayoutCustomEmpresa: FC = () => {
         </Header>
 
         <Content style={{ margin: "24px 16px" }}>
+          {/* === Breadcrumb dinámico === */}
+          <div
+            style={{
+              marginBottom: 16,
+              background: "#fff",
+              padding: "8px 16px",
+              borderRadius: 8,
+              boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
+            }}
+          >
+            <Breadcrumb
+              items={[
+                {
+                  href: "/empresa/home",
+                  title: <HomeOutlined />,
+                },
+                ...(() => {
+                  const path = location.pathname;
+
+                  // === Publicar desafío ===
+                  if (path.includes("/empresa/formulario")) {
+                    return [
+                      {
+                        href: "/empresa/formulario",
+                        title: (
+                          <>
+                            <PlusCircleOutlined />
+                            <span style={{ marginLeft: 4 }}>
+                              Publicar Desafío
+                            </span>
+                          </>
+                        ),
+                      },
+                    ];
+                  }
+
+                  // === Mis desafíos ===
+                  if (path.includes("/empresa/desafios")) {
+                    return [
+                      {
+                        href: "/empresa/desafios",
+                        title: (
+                          <>
+                            <FileTextOutlined />
+                            <span style={{ marginLeft: 4 }}>Mis Desafíos</span>
+                          </>
+                        ),
+                      },
+                    ];
+                  }
+
+                  if (path.includes("/empresa/verPropuestas/detalle")) {
+                    return [
+                      {
+                        href: "/empresa/desafios",
+                        title: (
+                          <>
+                            <FileTextOutlined />
+                            <span style={{ marginLeft: 4 }}>Mis Desafíos</span>
+                          </>
+                        ),
+                      },
+                      {
+                        href: `/empresa/verPropuestas/${desafioId || ""}`,
+                        title: (
+                          <>
+                            <EyeOutlined />
+                            <span style={{ marginLeft: 4 }}>
+                              Ver Propuestas
+                            </span>
+                          </>
+                        ),
+                      },
+                      {
+                        title: (
+                          <>
+                            <FileTextOutlined />
+                            <span style={{ marginLeft: 4 }}>
+                              Detalle de Propuesta
+                            </span>
+                          </>
+                        ),
+                      },
+                    ];
+                  }
+
+                  if (path.includes("/empresa/verPropuestas")) {
+                    return [
+                      {
+                        href: "/empresa/desafios",
+                        title: (
+                          <>
+                            <FileTextOutlined />
+                            <span style={{ marginLeft: 4 }}>Mis Desafíos</span>
+                          </>
+                        ),
+                      },
+                      {
+                        title: (
+                          <>
+                            <EyeOutlined />
+                            <span style={{ marginLeft: 4 }}>
+                              Ver Propuestas
+                            </span>
+                          </>
+                        ),
+                      },
+                    ];
+                  }
+
+                  // === Por defecto ===
+                  return [
+                    {
+                      title: (
+                        <>
+                          <UserOutlined />
+                          <span style={{ marginLeft: 4 }}>Panel Empresa</span>
+                        </>
+                      ),
+                    },
+                  ];
+                })(),
+              ].flat()}
+            />
+          </div>
+
+          {/* === Contenido principal === */}
           <div
             style={{
               padding: 24,

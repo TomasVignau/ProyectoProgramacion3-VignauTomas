@@ -1,55 +1,3 @@
-/*import "../../../styles/home.css";
-import { Carousel } from "antd";
-
-export const HomeEmprendedor = () => {
-  return (
-    <div style={{ textAlign: "center", padding: "0 10px" }}>
-      <h1>Bienvenido EMPRENDEDOR a la página de inicio</h1>
-      <p>Usa el menú lateral para navegar.</p>
-
-      <Carousel
-        autoplay
-        autoplaySpeed={2500}
-        style={{
-          width: "100%",
-          maxWidth: "1000px",
-          margin: "0 auto",
-          border: "2px solid black",
-          borderRadius: "15px",
-          overflow: "hidden",
-        }}
-      >
-        <div>
-          <div className="estiloCarousel">
-            <img
-              src="https://wallpapers.com/images/hd/entrepreneur-skyscraper-5ze2orkv2zv9pbhl.jpg"
-              alt="Empresa"
-            />
-          </div>
-        </div>
-
-        <div>
-          <div className="estiloCarousel">
-            <img
-              src="https://e1.pxfuel.com/desktop-wallpaper/990/550/desktop-wallpaper-entrepreneur-entrapreneur.jpg"
-              alt="Empresa"
-            />
-          </div>
-        </div>
-
-        <div>
-          <div className="estiloCarousel">
-            <img
-              src="https://cdn.forbes.com.mx/2022/11/emprendimiento-emprendedores-empresa-contabilidad-credito.jpg"
-              alt="Empresa"
-            />
-          </div>
-        </div>
-      </Carousel>
-    </div>
-  );
-};*/
-
 import "../../../styles/home.css";
 import { Carousel, Badge, Dropdown, Card, Space, Typography } from "antd";
 import {
@@ -57,22 +5,95 @@ import {
   RocketOutlined,
   FileTextOutlined,
 } from "@ant-design/icons";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { MenuProps } from "antd";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { NotificacionFormValues } from "../../../types/notificacionFormValues";
 
 const { Title, Paragraph } = Typography;
 
 export const HomeEmprendedor = () => {
-  const [notificaciones] = useState<string[]>([
-    "Propuesta 2: Revisión completada",
-    "Tu propuesta para Desafío 5 fue aceptada",
-    "Nuevo desafío publicado: Desafío 8",
-  ]);
+  const [notificaciones, setNotificaciones] = useState<NotificacionFormValues[]>([]);
+  const navigate = useNavigate();
+
+  const token = localStorage.getItem("token");
+  const emprendedor = JSON.parse(localStorage.getItem("user") || "{}");
+  const idEmprendedor: string | undefined = emprendedor?._id;
+
+  useEffect(() => {
+    if (!idEmprendedor) return;
+
+    fetch(`http://localhost:4000/notification/${idEmprendedor}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token ?? ""}`,
+      },
+    })
+      .then(async (res) => {
+        if (!res.ok) throw new Error("Error al verificar notificaciones");
+        const data = await res.json();
+        setNotificaciones(data);
+      })
+      .catch((err) => {
+        console.error("Error al verificar notificaciones:", err);
+      });
+  }, [idEmprendedor]);
+
+  const handleSelectNotificacion = async (notif: NotificacionFormValues) => {
+    try {
+      // Actualiza estado local inmediatamente
+      setNotificaciones((prev) =>
+        prev.map((n) => (n._id === notif._id ? { ...n, unview: true } : n))
+      );
+
+      // Llama al backend con fetch
+      await fetch(`http://localhost:4000/notification/${notif._id}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token ?? ""}`,
+        },
+        body: JSON.stringify({ unview: true }),
+      });
+    } catch (err) {
+      console.error("Error al marcar notificación:", err);
+    }
+
+    // 3️⃣ Navegación SEGURA (siempre debe ejecutarse)
+    if (notif.typeNotification === "desafio") {
+      navigate(`/emprendedor/desafiosPublicados`);
+      return;
+    }
+
+    if (notif.typeNotification === "propuestaEstado") {
+      navigate(`/emprendedor/propuestas`);
+      return;
+    }
+  };
 
   const menuItems: MenuProps["items"] = notificaciones.map((n, i) => ({
     key: i.toString(),
-    label: <div className="menu-item">{n}</div>,
+    label: (
+      <div className="menu-item" onClick={() => handleSelectNotificacion(n)}>
+        {/* Notificación por desafío */}
+        {n.typeNotification === "desafio" && (
+          <span>
+            Nuevo desafío publicado por{" "}
+            <strong>{n.idCompany?.name ?? "Una empresa"}</strong>
+          </span>
+        )}
+
+        {/* Notificación por cambio de estado de propuesta */}
+        {n.typeNotification === "propuestaEstado" && (
+          <span>
+            Tu propuesta{" "}
+            <strong>{n.idProposal?.title ?? "(sin título)"}</strong> cambió de
+            estado.
+          </span>
+        )}
+      </div>
+    ),
   }));
 
   return (
@@ -92,7 +113,7 @@ export const HomeEmprendedor = () => {
                 trigger={["click"]}
               >
                 <Badge
-                  count={notificaciones.length}
+                  count={notificaciones.filter((n) => !n.unview).length}
                   size="default"
                   offset={[0, 2]}
                 >
@@ -125,10 +146,7 @@ export const HomeEmprendedor = () => {
 
           {/* Tarjetas inferiores */}
           <div className="home-grid">
-            <Link
-              to="/emprendedor/desafiosPublicados"
-              className="home-link"
-            >
+            <Link to="/emprendedor/desafiosPublicados" className="home-link">
               <Card hoverable className="home-card-mini">
                 <RocketOutlined className="home-icon" />
                 <Title level={4} className="home-subtitle">
@@ -140,10 +158,7 @@ export const HomeEmprendedor = () => {
               </Card>
             </Link>
 
-            <Link
-              to="/emprendedor/propuestas"
-              className="home-link"
-            >
+            <Link to="/emprendedor/propuestas" className="home-link">
               <Card hoverable className="home-card-mini">
                 <FileTextOutlined className="home-icon" />
                 <Title level={4} className="home-subtitle">

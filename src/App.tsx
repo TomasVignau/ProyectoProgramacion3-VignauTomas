@@ -11,6 +11,7 @@ import { FormularioEmpresa } from "./modules/empresa/formulario";
 import { DesafiosEmpresa } from "./modules/empresa/desafios";
 import { LayoutCustomEmpresa } from "./modules/empresa/layout";
 import EmpresaDetalle from "./modules/empresa/detalle";
+import { PropuestaDetalle } from "./modules/empresa/verPropuestas/detalle";
 
 {
   /* EMPRENDEDOR */
@@ -22,6 +23,7 @@ import { DesafiosPublicados } from "./modules/emprendedor/desafiosPublicados";
 import { PublicarPropuesta } from "./modules/emprendedor/publicarPropuestas";
 import { VerPropuestasEmprendedores } from "./modules/empresa/verPropuestas";
 import EmprendedorDetalle from "./modules/emprendedor/detalle";
+import { EmpresasSeguidas } from "./modules/emprendedor/empresasSeguidas";
 
 export const App = () => (
   <div className="App">
@@ -46,12 +48,19 @@ export const App = () => (
           <Route path="home" element={<HomeEmpresa />} />
           <Route path="formulario" element={<FormularioEmpresa />} />
           <Route path="desafios" element={<DesafiosEmpresa />} />
-          <Route path="verPropuestas/:idChallenge" element={<VerPropuestasEmprendedores />} />
 
+          {/* Primero la más específica */}
           <Route
-            path="emprendedor/:idUser"
-            element={<EmprendedorDetalle />}
+            path="verPropuestas/detalle/:idPropuesta"
+            element={<PropuestaDetalle />}
           />
+          {/* Luego la más general */}
+          <Route
+            path="verPropuestas/:idChallenge"
+            element={<VerPropuestasEmprendedores />}
+          />
+
+          <Route path="emprendedor/:idUser" element={<EmprendedorDetalle />} />
         </Route>
 
         {/* Rutas Emprendedor */}
@@ -59,8 +68,12 @@ export const App = () => (
           <Route path="home" element={<HomeEmprendedor />} />
           <Route path="desafiosPublicados" element={<DesafiosPublicados />} />
           <Route path="propuestas" element={<PropuestasEmprendedor />} />
-          <Route path="publicarPropuesta" element={<PublicarPropuesta />} />
-          <Route path="empresa/:nombreEmpresa" element={<EmpresaDetalle />} />
+          <Route
+            path="publicarPropuesta/:_id"
+            element={<PublicarPropuesta />}
+          />
+          <Route path="follows" element={<EmpresasSeguidas />} />
+          <Route path="empresa/:idUser" element={<EmpresaDetalle />} />
         </Route>
 
         {/* Not Found */}

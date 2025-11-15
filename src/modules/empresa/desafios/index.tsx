@@ -1,11 +1,7 @@
 import { Button, Table, Spin, Card, Space, Typography, Tag } from "antd";
 import { Link } from "react-router-dom";
 import { useState, useEffect } from "react";
-import {
-  EyeOutlined,
-  CalendarOutlined,
-  HomeOutlined,
-} from "@ant-design/icons";
+import { EyeOutlined, CalendarOutlined } from "@ant-design/icons";
 import type { ColumnsType } from "antd/es/table";
 import { DesafioFormValues } from "../../../types/desafioFormValues";
 
@@ -17,7 +13,6 @@ export const DesafiosEmpresa = () => {
   const [desafios, setDesafios] = useState<DesafioFormValues[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   //const [error, setError] = useState<string | null>(null);
-
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -37,18 +32,18 @@ export const DesafiosEmpresa = () => {
       },
     })
       .then(async (res) => {
-        if (!res.ok) throw new Error("Token inválido o sin autorización")
-        const data = await res.json()
+        if (!res.ok) throw new Error("Token inválido o sin autorización");
+        const data = await res.json();
         console.log("Datos recibidos desde API:", data);
-        setDesafios(data)
+        setDesafios(data);
         setIsLoading(false);
       })
       .catch((err) => {
         //setError(err.message || "Error al conectar con la API");
         console.error("Error fetching challenges:", err);
         setIsLoading(false);
-      })
-  }, [])
+      });
+  }, []);
 
   const columns: ColumnsType<DesafioFormValues> = [
     {
@@ -93,7 +88,10 @@ export const DesafiosEmpresa = () => {
       key: "acciones",
       width: 180,
       render: (_, record) => (
-        <Link to={`/empresa/verPropuestas/${record._id}`}>
+        <Link
+          to={`/empresa/verPropuestas/${record._id}`}
+          onClick={() => localStorage.setItem("desafioId", record._id ?? "")}
+        >
           <Button
             type="primary"
             icon={<EyeOutlined />}
@@ -142,24 +140,8 @@ export const DesafiosEmpresa = () => {
               }}
             />
           )}
-
-          <Link to="/empresa/home">
-            <Button
-              type="default"
-              icon={<HomeOutlined />}
-              size="large"
-              block
-              style={{
-                borderColor: "#463F3A",
-                color: "#463F3A",
-              }}
-            >
-              Volver al Inicio
-            </Button>
-          </Link>
         </Space>
       </Card>
     </div>
   );
 };
-

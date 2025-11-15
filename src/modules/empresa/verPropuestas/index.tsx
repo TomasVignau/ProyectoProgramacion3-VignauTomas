@@ -7,6 +7,7 @@ import {
   Card,
   Space,
   Typography,
+  message,
 } from "antd";
 import { Link, useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
@@ -14,21 +15,14 @@ import {
   CheckCircleOutlined,
   SyncOutlined,
   CloseCircleOutlined,
-  HomeOutlined,
   ApartmentOutlined,
 } from "@ant-design/icons";
 import type { ColumnsType } from "antd/es/table";
 import UserFormValues from "../../../types/userFormValues";
+import { PropuestaFormValues } from "../../../types/propuestaFormValues";
 //import PropuestasData from "../../../data/propuestas.json";
 
 const { Title, Text } = Typography;
-
-interface PropuestaFormValues {
-  idDesafio: number;
-  nombreDesafio: string;
-  nombreEmpresa: string;
-  estado: string;
-}
 
 export const VerPropuestasEmprendedores = () => {
   const { idChallenge } = useParams<{ idChallenge: string }>();
@@ -58,20 +52,65 @@ export const VerPropuestasEmprendedores = () => {
       .finally(() => setIsLoading(false));
   }, [idChallenge]);
 
-  const handleEstadoChange = (value: string, record: PropuestaFormValues) => {
-    setPropuestas((prev) =>
-      prev.map((p) =>
-        p.idDesafio === record.idDesafio &&
-        p.nombreEmpresa === record.nombreEmpresa
-          ? { ...p, estado: value }
-          : p
-      )
-    );
+  const handleEstadoChange = async (
+    nuevoEstado: string,
+    record: PropuestaFormValues
+  ) => {
+    try {
+      const token = localStorage.getItem("token");
+
+      const response = await fetch(
+        `http://localhost:4000/proposals/${record._id}/state`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token ?? ""}`,
+          },
+          body: JSON.stringify({ state: nuevoEstado }),
+        }
+      );
+
+      if (!response.ok) {
+        const msg = await response.text();
+        throw new Error(msg || "Error al actualizar el estado");
+      }
+
+      const propuestaActualizada = await response.json();
+
+      message.success(
+        `Propuesta "${propuestaActualizada.title}" actualizada a "${nuevoEstado}"`
+      );
+
+      await fetch("http://localhost:4000/notification/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token ?? ""}`,
+        },
+        body: JSON.stringify({
+          idEmprendedor: record.idUser._id,
+          idCompany: record.idCompany._id,
+          typeNotification: "propuestaEstado",
+          idProposal: record._id,
+        }),
+      });
+
+      // Opcional: actualizar estado local si estás mostrando las propuestas en una tabla
+      setPropuestas((prev) =>
+        prev.map((p) =>
+          p._id === propuestaActualizada._id ? { ...p, state: nuevoEstado } : p
+        )
+      );
+    } catch (error) {
+      console.error("Error al actualizar estado:", error);
+      message.error("No se pudo actualizar el estado");
+    }
   };
 
   const columns: ColumnsType<PropuestaFormValues> = [
     {
-      title: "ID Desafío",
+      title: "ID Propuesta",
       dataIndex: "_id",
       key: "idDesafio",
       width: 120,
@@ -82,7 +121,7 @@ export const VerPropuestasEmprendedores = () => {
       ),
     },
     {
-      title: "Nombre del Desafío",
+      title: "Nombre de la propuesta",
       dataIndex: "title",
       key: "nombreDesafio",
       render: (nombre: string) => (
@@ -112,6 +151,21 @@ export const VerPropuestasEmprendedores = () => {
           </Link>
         );
       },
+    },
+    {
+      title: "Acciones",
+      key: "acciones",
+      align: "center",
+      render: (_, record: PropuestaFormValues) => (
+        <Link to={`/empresa/verPropuestas/detalle/${record._id}`}>
+          <Button
+            type="primary"
+            style={{ backgroundColor: "#463F3A", border: "none" }}
+          >
+            Ver Detalle
+          </Button>
+        </Link>
+      ),
     },
     {
       title: "Estado",
@@ -174,7 +228,7 @@ export const VerPropuestasEmprendedores = () => {
             <Table
               dataSource={propuestas}
               columns={columns}
-              rowKey={(record) => `${record.idDesafio}-${record.nombreEmpresa}`}
+              rowKey={(record) => `${record._id}-${record.idCompany.name}`}
               scroll={{ x: "max-content" }}
               pagination={{
                 pageSize: 10,
@@ -183,21 +237,6 @@ export const VerPropuestasEmprendedores = () => {
               }}
             />
           )}
-
-          <Link to="/empresa/home">
-            <Button
-              type="default"
-              icon={<HomeOutlined />}
-              size="large"
-              block
-              style={{
-                borderColor: "#463F3A",
-                color: "#463F3A",
-              }}
-            >
-              Volver al Inicio
-            </Button>
-          </Link>
         </Space>
       </Card>
     </div>

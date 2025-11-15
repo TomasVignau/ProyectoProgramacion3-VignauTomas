@@ -8,6 +8,7 @@ import {
   Avatar,
   Space,
   type MenuProps,
+  Breadcrumb,
 } from "antd";
 import {
   HomeOutlined,
@@ -17,17 +18,14 @@ import {
   ClockCircleOutlined,
   MenuFoldOutlined,
   MenuUnfoldOutlined,
+  CheckOutlined,
+  PlusCircleOutlined,
+  FileTextOutlined,
 } from "@ant-design/icons";
 import { Outlet, Link, useLocation } from "react-router-dom";
 
 const { Header, Content, Footer, Sider } = Layout;
 const { Title, Text } = Typography;
-
-const userStorage = localStorage.getItem("user");
-
-const usuario = userStorage ? JSON.parse(userStorage) : { name: "Invitado" };
-
-console.log(usuario);
 
 type MenuItem = Required<MenuProps>["items"][number];
 
@@ -43,6 +41,30 @@ export const LayoutCustomEmprendedor: FC = () => {
   const [collapsed, setCollapsed] = useState(false);
   const location = useLocation();
   const [hora, setHora] = useState(new Date());
+
+  const [usuario, setUsuario] = useState<{ name: string }>({
+    name: "Invitado",
+  });
+
+  useEffect(() => {
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) {
+      setUsuario(JSON.parse(storedUser));
+    }
+
+    // Si el localStorage cambia (por ejemplo, tras login)
+    const handleStorageChange = () => {
+      const updatedUser = localStorage.getItem("user");
+      if (updatedUser) {
+        setUsuario(JSON.parse(updatedUser));
+      } else {
+        setUsuario({ name: "Invitado" });
+      }
+    };
+
+    window.addEventListener("storage", handleStorageChange);
+    return () => window.removeEventListener("storage", handleStorageChange);
+  }, []);
 
   useEffect(() => {
     const interval = setInterval(() => setHora(new Date()), 1000);
@@ -70,6 +92,13 @@ export const LayoutCustomEmprendedor: FC = () => {
       </Link>,
       "/emprendedor/propuestas",
       <UserOutlined className="colorTextoMenu" />
+    ),
+    getItem(
+      <Link to="/emprendedor/follows" className="colorTextoMenu">
+        Empresas Seguidas
+      </Link>,
+      "/emprendedor/follows",
+      <CheckOutlined className="colorTextoMenu" />
     ),
   ];
 
@@ -105,38 +134,7 @@ export const LayoutCustomEmprendedor: FC = () => {
             flexDirection: "column",
           }}
         >
-          {/* Encabezado del Sider */}
-          <div
-            style={{
-              padding: "24px 16px",
-              textAlign: "center",
-              borderBottom: "1px solid rgba(255, 255, 255, 0.1)",
-            }}
-          >
-            {!collapsed && (
-              <Title
-                level={4}
-                style={{ color: "#E0E0E0", margin: 0, fontWeight: 700 }}
-              >
-                EMPRENDEDOR
-              </Title>
-            )}
-          </div>
-
-          {/* Menú principal */}
-          <Menu
-            theme="dark"
-            selectedKeys={[location.pathname]}
-            mode="inline"
-            items={items}
-            style={{
-              background: "transparent",
-              flex: 1,
-              border: "none",
-            }}
-          />
-
-          {/* Bloque inferior (usuario y hora) */}
+          {/* Bloque (usuario y hora) */}
           <Dropdown
             menu={menuUsuario}
             placement="topCenter"
@@ -193,6 +191,36 @@ export const LayoutCustomEmprendedor: FC = () => {
               </Space>
             </div>
           </Dropdown>
+          {/* Encabezado del Sider */}
+          <div
+            style={{
+              padding: "24px 16px",
+              textAlign: "center",
+              borderBottom: "1px solid rgba(255, 255, 255, 0.1)",
+            }}
+          >
+            {!collapsed && (
+              <Title
+                level={4}
+                style={{ color: "#E0E0E0", margin: 0, fontWeight: 700 }}
+              >
+                EMPRENDEDOR
+              </Title>
+            )}
+          </div>
+
+          {/* Menú principal */}
+          <Menu
+            theme="dark"
+            selectedKeys={[location.pathname]}
+            mode="inline"
+            items={items}
+            style={{
+              background: "transparent",
+              flex: 1,
+              border: "none",
+            }}
+          />
         </div>
       </Sider>
 
@@ -241,6 +269,91 @@ export const LayoutCustomEmprendedor: FC = () => {
         </Header>
 
         <Content style={{ margin: "24px 16px" }}>
+          {/* === Breadcrumb dinámico === */}
+          <div
+            style={{
+              marginBottom: 16,
+              background: "#fff",
+              padding: "8px 16px",
+              borderRadius: 8,
+              boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
+            }}
+          >
+            <Breadcrumb
+              items={[
+                {
+                  href: "/emprendedor/home",
+                  title: <HomeOutlined />,
+                },
+                ...(() => {
+                  const path = location.pathname;
+
+                  // === Publicar desafío ===
+                  if (path.includes("/emprendedor/desafiosPublicados")) {
+                    return [
+                      {
+                        href: "/empresa/desafiosPublicados",
+                        title: (
+                          <>
+                            <PlusCircleOutlined />
+                            <span style={{ marginLeft: 4 }}>Ver Desafíos</span>
+                          </>
+                        ),
+                      },
+                    ];
+                  }
+
+                  // === Mis desafíos ===
+                  if (path.includes("/emprendedor/propuestas")) {
+                    return [
+                      {
+                        href: "/emprendedor/propuestas",
+                        title: (
+                          <>
+                            <FileTextOutlined />
+                            <span style={{ marginLeft: 4 }}>
+                              Mis Propuestas
+                            </span>
+                          </>
+                        ),
+                      },
+                    ];
+                  }
+
+                  if (path.includes("/emprendedor/follows")) {
+                    return [
+                      {
+                        href: "/emprendedor/follows",
+                        title: (
+                          <>
+                            <CheckOutlined />
+                            <span style={{ marginLeft: 4 }}>
+                              Empresas Seguidas
+                            </span>
+                          </>
+                        ),
+                      },
+                    ];
+                  }
+
+                  // === Por defecto ===
+                  return [
+                    {
+                      title: (
+                        <>
+                          <UserOutlined />
+                          <span style={{ marginLeft: 4 }}>
+                            Panel Emprendedor
+                          </span>
+                        </>
+                      ),
+                    },
+                  ];
+                })(),
+              ].flat()}
+            />
+          </div>
+          {/* === Contenido principal === */}
           <div
             style={{
               padding: 24,

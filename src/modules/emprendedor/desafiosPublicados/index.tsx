@@ -1,5 +1,5 @@
 import "../../../styles/formulario.css";
-import { Button, Card, Typography, Space, Tag, Input, Empty, Spin } from "antd";
+import { Button, Card, Typography, Space, Tag, Input, Empty, Spin, Row, Col } from "antd";
 import dayjs from "dayjs";
 import { Link } from "react-router-dom";
 import {
@@ -18,7 +18,6 @@ export const DesafiosPublicados = () => {
   const [desafios, setDesafios] = useState<DesafioFormValues[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
-  // 🔹 Cargar desafíos desde la API
   useEffect(() => {
     setIsLoading(true);
     fetch("http://localhost:4000/challenges", {
@@ -41,7 +40,6 @@ export const DesafiosPublicados = () => {
       .finally(() => setIsLoading(false));
   }, []);
 
-  // 🔹 Filtrado local
   const desafiosFiltrados = useMemo(() => {
     const term = busqueda.toLowerCase().trim();
     if (!term) return desafios;
@@ -75,69 +73,77 @@ export const DesafiosPublicados = () => {
           <Spin size="large" tip="Cargando desafíos..." />
         </div>
       ) : desafiosFiltrados.length > 0 ? (
-        desafiosFiltrados.map((desafio) => (
-          <Card
-            key={desafio._id}
-            style={{
-              borderRadius: 12,
-              boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)",
-              background: "#fff",
-            }}
-            title={
-              <Space align="center">
-                <BulbOutlined style={{ color: "#463F3A", fontSize: 20 }} />
-                <Title level={4} style={{ margin: 0, color: "#463F3A" }}>
-                  {desafio.title}
-                </Title>
-              </Space>
-            }
-            extra={
-              <Link
-                to={`/emprendedor/empresa/${encodeURIComponent(
-                  desafio.idCompany.name
-                )}`}
+        <Row gutter={[24, 24]}>
+          {" "}
+          {desafiosFiltrados.map((desafio) => (
+            <Col xs={24} sm={12} key={desafio._id}>
+              {" "}
+              <Card
                 style={{
-                  color: "#BC6C25",
-                  fontWeight: 500,
-                  textDecoration: "none",
+                  borderRadius: 12,
+                  boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)",
+                  background: "#fff",
                 }}
+                title={
+                  <Space align="center">
+                    <BulbOutlined style={{ color: "#463F3A", fontSize: 20 }} />
+                    <Title level={4} style={{ margin: 0, color: "#463F3A" }}>
+                      {desafio.title}
+                    </Title>
+                  </Space>
+                }
+                extra={
+                  <Link
+                    to={`/emprendedor/empresa/${desafio.idCompany._id}`}
+                    style={{
+                      color: "#BC6C25",
+                      fontWeight: 500,
+                      textDecoration: "none",
+                    }}
+                  >
+                    <ApartmentOutlined />{" "}
+                    {" | " + desafio.idCompany.name.toUpperCase()}
+                  </Link>
+                }
               >
-                <ApartmentOutlined /> {(" | ") + desafio.idCompany.name.toUpperCase()}
-              </Link>
-            }
-          >
-            <Text style={{ display: "block", marginBottom: 12 }}>
-              {desafio.description}
-            </Text>
-            <Tag
-              icon={<CalendarOutlined />}
-              color="default"
-              style={{
-                fontSize: 13,
-                borderRadius: 6,
-                marginBottom: 12,
-              }}
-            >
-              Fecha límite: {dayjs(desafio.expirationDate).format("DD/MM/YYYY")}
-            </Tag>
+                <Text style={{ display: "block", marginBottom: 12 }}>
+                  {desafio.description}
+                </Text>
+                <Tag
+                  icon={<CalendarOutlined />}
+                  color="default"
+                  style={{
+                    fontSize: 13,
+                    borderRadius: 6,
+                    marginBottom: 12,
+                  }}
+                >
+                  Fecha límite:{" "}
+                  {dayjs(desafio.expirationDate).format("DD/MM/YYYY")}
+                </Tag>
 
-            <Link to="/emprendedor/publicarPropuesta">
-              <Button
-                type="primary"
-                size="large"
-                block
-                style={{
-                  backgroundColor: "#463F3A",
-                  border: "none",
-                  fontWeight: 600,
-                  borderRadius: 8,
-                }}
-              >
-                PUBLICAR PROPUESTA
-              </Button>
-            </Link>
-          </Card>
-        ))
+                <Link
+                  to={`/emprendedor/publicarPropuesta/${desafio._id}`}
+                  state={{ desafio }}
+                >
+                  <Button
+                    type="primary"
+                    size="large"
+                    block
+                    style={{
+                      backgroundColor: "#463F3A",
+                      border: "none",
+                      fontWeight: 600,
+                      borderRadius: 8,
+                    }}
+                  >
+                    PUBLICAR PROPUESTA
+                  </Button>
+                </Link>
+              </Card>
+            </Col>
+          ))}
+        </Row>
       ) : (
         <Empty
           description="No se encontraron desafíos que coincidan con tu búsqueda"

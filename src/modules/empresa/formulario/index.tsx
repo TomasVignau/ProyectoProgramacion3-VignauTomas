@@ -16,12 +16,16 @@ import { UploadOutlined, RocketOutlined } from "@ant-design/icons";
 import type { UploadProps } from "antd";
 import dayjs from "dayjs";
 import { DesafioFormValues } from "../../../types/desafioFormValues";
+import { useNavigate } from "react-router-dom";
+import UserFormValues from "../../../types/userFormValues";
 
 const { Title, Text } = Typography;
+
 
 export const FormularioEmpresa = () => {
   const [progress, setProgress] = useState(0);
   const [form] = Form.useForm();
+  const navigate = useNavigate();
 
   const fields: (keyof DesafioFormValues)[] = [
     "title",
@@ -64,15 +68,10 @@ export const FormularioEmpresa = () => {
   const onFinish = async (values: DesafioFormValues): Promise<void> => {
     try {
       const token = localStorage.getItem("token");
-
       const userStorage = localStorage.getItem("user");
+      const usuario = userStorage ? JSON.parse(userStorage) : { _id: "" };
 
-      const usuario = userStorage ? JSON.parse(userStorage) : { id: "" };
-
-      console.log("Usuario desde localStorage:", usuario);
-
-      console.log("Payload a enviar:", { ...values, idCompany: usuario.id });
-
+      // 1) Crear el desafío
       const response = await fetch("http://localhost:4000/challenges/", {
         method: "POST",
         headers: {
@@ -87,15 +86,48 @@ export const FormularioEmpresa = () => {
       });
 
       if (!response.ok) {
-        // Intentamos leer el mensaje del backend
         const errorMessage = await response.text();
         throw new Error(errorMessage || `Error HTTP ${response.status}`);
       }
 
       const createdForm: DesafioFormValues = await response.json();
       console.log("Desafío creado correctamente:", createdForm);
-      alert("Desafío creado correctamente");
 
+      // 2) Obtener seguidores de esa empresa
+      const followersRes = await fetch(
+        `http://localhost:4000/follow/company/${usuario._id}`,
+        {
+          headers: { Authorization: `Bearer ${token ?? ""}` },
+        }
+      );
+
+      if (!followersRes.ok) {
+        throw new Error("No se pudo obtener la lista de seguidores.");
+      }
+
+      const followers: UserFormValues[] = await followersRes.json();
+      console.log("Seguidores:", followers);
+
+      // 3) Crear una notificación por cada seguidor
+      await Promise.all(
+        followers.map((follower: UserFormValues) =>
+          fetch("http://localhost:4000/notification/", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token ?? ""}`,
+            },
+            body: JSON.stringify({
+              idEmprendedor: follower._id,
+              idCompany: usuario._id,
+              typeNotification: "desafio",
+              idChallenge: createdForm._id,
+            }),
+          })
+        )
+      );
+
+      alert("Desafío creado y notificaciones enviadas");
       form.resetFields();
     } catch (error) {
       if (error instanceof Error) {
@@ -220,6 +252,7 @@ export const FormularioEmpresa = () => {
               block
               size="large"
               icon={<RocketOutlined />}
+              onClick={() => navigate(-1)}
             >
               PUBLICAR DESAFÍO
             </Button>
