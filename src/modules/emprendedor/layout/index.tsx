@@ -4,7 +4,6 @@ import {
   Layout,
   Menu,
   Typography,
-  Dropdown,
   Avatar,
   Space,
   type MenuProps,
@@ -22,7 +21,7 @@ import {
   PlusCircleOutlined,
   FileTextOutlined,
 } from "@ant-design/icons";
-import { Outlet, Link, useLocation } from "react-router-dom";
+import { Outlet, Link, useLocation, useNavigate } from "react-router-dom";
 
 const { Header, Content, Footer, Sider } = Layout;
 const { Title, Text } = Typography;
@@ -41,6 +40,7 @@ export const LayoutCustomEmprendedor: FC = () => {
   const [collapsed, setCollapsed] = useState(false);
   const location = useLocation();
   const [hora, setHora] = useState(new Date());
+  const navigate = useNavigate();
 
   const [usuario, setUsuario] = useState<{ name: string }>({
     name: "Invitado",
@@ -70,6 +70,21 @@ export const LayoutCustomEmprendedor: FC = () => {
     const interval = setInterval(() => setHora(new Date()), 1000);
     return () => clearInterval(interval);
   }, []);
+
+  const handleLogout = () => {
+    // 1. Borrar token y datos
+    localStorage.removeItem("token");
+    localStorage.removeItem("usuario");
+
+    // 2. Redirigir al login reemplazando historial
+    navigate("/", { replace: true });
+
+    // 3. Bloquear el botón "Atrás"
+    window.history.pushState(null, "", window.location.href);
+    window.onpopstate = () => {
+      window.history.go(1);
+    };
+  };
 
   const items: MenuItem[] = [
     getItem(
@@ -102,19 +117,9 @@ export const LayoutCustomEmprendedor: FC = () => {
     ),
   ];
 
-  const menuUsuario: MenuProps = {
-    items: [
-      {
-        key: "logout",
-        icon: <LogoutOutlined />,
-        label: <Link to="/">Cerrar Sesión</Link>,
-        danger: true,
-      },
-    ],
-  };
-
   return (
     <Layout style={{ minHeight: "100vh" }}>
+      {/* ===== SIDEBAR ===== */}
       {/* ===== SIDEBAR ===== */}
       <Sider
         collapsible
@@ -134,63 +139,51 @@ export const LayoutCustomEmprendedor: FC = () => {
             flexDirection: "column",
           }}
         >
-          {/* Bloque (usuario y hora) */}
-          <Dropdown
-            menu={menuUsuario}
-            placement="topCenter"
-            trigger={["click"]}
+          {/* Avatar pero SIN menú */}
+          <div
+            style={{
+              cursor: "default",
+              padding: "20px 16px",
+              borderTop: "1px solid rgba(255, 255, 255, 0.1)",
+              background: "rgba(0, 0, 0, 0.2)",
+            }}
           >
-            <div
-              style={{
-                cursor: "pointer",
-                padding: "20px 16px",
-                borderTop: "1px solid rgba(255, 255, 255, 0.1)",
-                background: "rgba(0, 0, 0, 0.2)",
-                transition: "background 0.3s ease",
-              }}
-              onMouseEnter={(e) =>
-                (e.currentTarget.style.background = "rgba(0, 0, 0, 0.3)")
-              }
-              onMouseLeave={(e) =>
-                (e.currentTarget.style.background = "rgba(0, 0, 0, 0.2)")
-              }
+            <Space
+              direction="vertical"
+              size="small"
+              style={{ width: "100%", alignItems: "center" }}
             >
-              <Space
-                direction="vertical"
-                size="small"
-                style={{ width: "100%", alignItems: "center" }}
-              >
-                <Avatar
-                  size={collapsed ? 40 : 56}
-                  icon={<UserOutlined />}
-                  style={{
-                    backgroundColor: "#6B6356",
-                    border: "2px solid #E0E0E0",
-                  }}
-                />
-                {!collapsed && (
-                  <>
-                    <Text
-                      strong
-                      style={{
-                        color: "#E0E0E0",
-                        fontSize: 14,
-                        textAlign: "center",
-                      }}
-                    >
-                      {usuario.name}
+              <Avatar
+                size={collapsed ? 40 : 56}
+                icon={<UserOutlined />}
+                style={{
+                  backgroundColor: "#6B6356",
+                  border: "2px solid #E0E0E0",
+                }}
+              />
+              {!collapsed && (
+                <>
+                  <Text
+                    strong
+                    style={{
+                      color: "#E0E0E0",
+                      fontSize: 14,
+                      textAlign: "center",
+                    }}
+                  >
+                    {usuario.name}
+                  </Text>
+                  <Space size="small" style={{ color: "#BCB8B1" }}>
+                    <ClockCircleOutlined />
+                    <Text style={{ color: "#BCB8B1", fontSize: 13 }}>
+                      {hora.toLocaleTimeString("es-AR", { hour12: false })}
                     </Text>
-                    <Space size="small" style={{ color: "#BCB8B1" }}>
-                      <ClockCircleOutlined />
-                      <Text style={{ color: "#BCB8B1", fontSize: 13 }}>
-                        {hora.toLocaleTimeString("es-AR", { hour12: false })}
-                      </Text>
-                    </Space>
-                  </>
-                )}
-              </Space>
-            </div>
-          </Dropdown>
+                  </Space>
+                </>
+              )}
+            </Space>
+          </div>
+
           {/* Encabezado del Sider */}
           <div
             style={{
@@ -221,6 +214,24 @@ export const LayoutCustomEmprendedor: FC = () => {
               border: "none",
             }}
           />
+
+          {/* BOTÓN CERRAR SESIÓN EN EL SIDEBAR */}
+          <div
+            style={{
+              padding: "16px",
+              borderTop: "1px solid rgba(255, 255, 255, 0.2)",
+              cursor: "pointer",
+              display: "flex",
+              alignItems: "center",
+              gap: "12px",
+              color: "#E0E0E0",
+              fontWeight: 600,
+            }}
+            onClick={handleLogout}
+          >
+            <LogoutOutlined style={{ fontSize: 18, color: "#E0E0E0" }} />
+            {!collapsed && <span>Cerrar Sesión</span>}
+          </div>
         </div>
       </Sider>
 
@@ -254,6 +265,7 @@ export const LayoutCustomEmprendedor: FC = () => {
             {collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
           </div>
 
+          {/* Título */}
           <Title
             level={2}
             style={{

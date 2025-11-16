@@ -1,24 +1,10 @@
 import "../../../styles/formulario.css";
-import {
-  Button,
-  Card,
-  Typography,
-  Space,
-  Input,
-  Empty,
-  Spin,
-  message,
-} from "antd";
-import { Link } from "react-router-dom";
-import {
-  SearchOutlined,
-  ApartmentOutlined,
-  MailOutlined,
-} from "@ant-design/icons";
+import { Input, Empty, Spin, message } from "antd";
+
+import { SearchOutlined } from "@ant-design/icons";
 import { useState, useMemo, useEffect } from "react";
 import UserFormValues from "../../../types/userFormValues";
-
-const { Title, Text } = Typography;
+import EmpresaCard from "../../../components/empresasSeguidasCard";
 
 export const EmpresasSeguidas = () => {
   const [busqueda, setBusqueda] = useState<string>("");
@@ -126,68 +112,7 @@ export const EmpresasSeguidas = () => {
         </div>
       ) : empresasFiltradas.length > 0 ? (
         empresasFiltradas.map((empresa) => (
-          <Card
-            key={empresa._id}
-            style={{
-              borderRadius: 12,
-              boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)",
-              background: "#fff",
-            }}
-            title={
-              <Space align="center">
-                <ApartmentOutlined style={{ color: "#463F3A", fontSize: 20 }} />
-                <Title level={4} style={{ margin: 0, color: "#463F3A" }}>
-                  {empresa.name}
-                </Title>
-              </Space>
-            }
-            extra={
-              <Link
-                to={`/emprendedor/empresa/${empresa._id}`}
-                style={{
-                  color: "#BC6C25",
-                  fontWeight: 500,
-                  textDecoration: "none",
-                }}
-              >
-                Ver perfil
-              </Link>
-            }
-          >
-            <Text style={{ display: "block", marginBottom: 12 }}>
-              {empresa.description}
-            </Text>
-
-            <Space direction="vertical" size={4}>
-              <Space>
-                <Text strong style={{ color: "#463F3A" }}>
-                  Teléfono:
-                </Text>
-                <Text>{empresa.phone ?? "Sin especificar"}</Text>
-              </Space>
-
-              <Space>
-                <MailOutlined style={{ color: "#463F3A" }} />
-                <Text>{empresa.email ?? "-"}</Text>
-              </Space>
-            </Space>
-
-            <Button
-              type="primary"
-              size="large"
-              block
-              onClick={() => handleUnfollow(empresa._id)}
-              style={{
-                marginTop: 16,
-                backgroundColor: "#463F3A",
-                border: "none",
-                fontWeight: 600,
-                borderRadius: 8,
-              }}
-            >
-              Dejar de seguir
-            </Button>
-          </Card>
+          <EmpresaCard empresa={empresa} onUnfollow={handleUnfollow} />
         ))
       ) : (
         <Empty

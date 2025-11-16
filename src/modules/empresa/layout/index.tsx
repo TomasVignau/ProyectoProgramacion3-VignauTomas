@@ -4,7 +4,6 @@ import {
   Layout,
   Menu,
   Typography,
-  Dropdown,
   Avatar,
   Space,
   Breadcrumb,
@@ -20,7 +19,7 @@ import {
   MenuUnfoldOutlined,
   EyeOutlined,
 } from "@ant-design/icons";
-import { Outlet, Link, useLocation } from "react-router-dom";
+import { Outlet, Link, useLocation, useNavigate } from "react-router-dom";
 import type { MenuProps } from "antd";
 
 const { Header, Content, Footer, Sider } = Layout;
@@ -44,6 +43,7 @@ export const LayoutCustomEmpresa: FC = () => {
   const [collapsed, setCollapsed] = useState(false);
   const location = useLocation();
   const [hora, setHora] = useState(new Date());
+  const navigate = useNavigate();
 
   const [usuario, setUsuario] = useState<{ name: string }>({
     name: "Invitado",
@@ -97,6 +97,21 @@ export const LayoutCustomEmpresa: FC = () => {
     return () => clearInterval(interval);
   }, []);
 
+  const handleLogout = () => {
+    // 1. Borrar token y datos
+    localStorage.removeItem("token");
+    localStorage.removeItem("usuario");
+
+    // 2. Redirigir al login reemplazando historial
+    navigate("/", { replace: true });
+
+    // 3. Bloquear el botón "Atrás"
+    window.history.pushState(null, "", window.location.href);
+    window.onpopstate = () => {
+      window.history.go(1);
+    };
+  };
+
   const items: MenuItem[] = [
     getItem(
       <Link to="/empresa/home" className="colorTextoMenu">
@@ -121,17 +136,6 @@ export const LayoutCustomEmpresa: FC = () => {
     ),
   ];
 
-  const menuUsuario: MenuProps = {
-    items: [
-      {
-        key: "logout",
-        icon: <LogoutOutlined />,
-        label: <Link to="/">Cerrar Sesión</Link>,
-        danger: true,
-      },
-    ],
-  };
-
   return (
     <Layout style={{ minHeight: "100vh" }}>
       <Sider
@@ -143,7 +147,7 @@ export const LayoutCustomEmpresa: FC = () => {
         }}
         onCollapse={(value) => setCollapsed(value)}
         breakpoint="md"
-        trigger={null} // 🔹 esto oculta el botón
+        trigger={null}
       >
         <div
           style={{
@@ -152,62 +156,54 @@ export const LayoutCustomEmpresa: FC = () => {
             flexDirection: "column",
           }}
         >
-          <Dropdown
-            menu={menuUsuario}
-            placement="topCenter"
-            trigger={["click"]}
+          {/* === Avatar y datos del usuario === */}
+          <div
+            style={{
+              cursor: "pointer",
+              padding: "20px 16px",
+              borderTop: "1px solid rgba(255, 255, 255, 0.1)",
+              background: "rgba(0, 0, 0, 0.2)",
+              transition: "background 0.3s ease",
+            }}
           >
-            <div
-              style={{
-                cursor: "pointer",
-                padding: "20px 16px",
-                borderTop: "1px solid rgba(255, 255, 255, 0.1)",
-                background: "rgba(0, 0, 0, 0.2)",
-                transition: "background 0.3s ease",
-              }}
-              onMouseEnter={(e) =>
-                (e.currentTarget.style.background = "rgba(0, 0, 0, 0.3)")
-              }
-              onMouseLeave={(e) =>
-                (e.currentTarget.style.background = "rgba(0, 0, 0, 0.2)")
-              }
+            <Space
+              direction="vertical"
+              size="small"
+              style={{ width: "100%", alignItems: "center" }}
             >
-              <Space
-                direction="vertical"
-                size="small"
-                style={{ width: "100%", alignItems: "center" }}
-              >
-                <Avatar
-                  size={collapsed ? 40 : 56}
-                  icon={<UserOutlined />}
-                  style={{
-                    backgroundColor: "#6B6356",
-                    border: "2px solid #E0E0E0",
-                  }}
-                />
-                {!collapsed && (
-                  <>
-                    <Text
-                      strong
-                      style={{
-                        color: "#E0E0E0",
-                        fontSize: 14,
-                        textAlign: "center",
-                      }}
-                    >
-                      {usuario.name}
+              <Avatar
+                size={collapsed ? 40 : 56}
+                icon={<UserOutlined />}
+                style={{
+                  backgroundColor: "#6B6356",
+                  border: "2px solid #E0E0E0",
+                }}
+              />
+              {!collapsed && (
+                <>
+                  <Text
+                    strong
+                    style={{
+                      color: "#E0E0E0",
+                      fontSize: 14,
+                      textAlign: "center",
+                    }}
+                  >
+                    {usuario.name}
+                  </Text>
+
+                  <Space size="small" style={{ color: "#BCB8B1" }}>
+                    <ClockCircleOutlined />
+                    <Text style={{ color: "#BCB8B1", fontSize: 13 }}>
+                      {hora.toLocaleTimeString("es-AR", { hour12: false })}
                     </Text>
-                    <Space size="small" style={{ color: "#BCB8B1" }}>
-                      <ClockCircleOutlined />
-                      <Text style={{ color: "#BCB8B1", fontSize: 13 }}>
-                        {hora.toLocaleTimeString("es-AR", { hour12: false })}
-                      </Text>
-                    </Space>
-                  </>
-                )}
-              </Space>
-            </div>
-          </Dropdown>
+                  </Space>
+                </>
+              )}
+            </Space>
+          </div>
+
+          {/* === Titulo Empresa === */}
           <div
             style={{
               padding: "24px 16px",
@@ -225,6 +221,7 @@ export const LayoutCustomEmpresa: FC = () => {
             )}
           </div>
 
+          {/* === Menú === */}
           <Menu
             theme="dark"
             selectedKeys={[location.pathname]}
@@ -236,6 +233,31 @@ export const LayoutCustomEmpresa: FC = () => {
               border: "none",
             }}
           />
+
+          {/* === Botón Cerrar Sesión === */}
+          <div
+            onClick={handleLogout}
+            style={{
+              padding: "16px",
+              borderTop: "1px solid rgba(255, 255, 255, 0.25)",
+              cursor: "pointer",
+              display: "flex",
+              alignItems: "center",
+              gap: "12px",
+              color: "#E0E0E0",
+              fontWeight: 600,
+              transition: "background 0.2s",
+            }}
+            onMouseEnter={(e) =>
+              (e.currentTarget.style.background = "rgba(255,255,255,0.1)")
+            }
+            onMouseLeave={(e) =>
+              (e.currentTarget.style.background = "transparent")
+            }
+          >
+            <LogoutOutlined style={{ fontSize: 18 }} />
+            {!collapsed && <span>Cerrar Sesión</span>}
+          </div>
         </div>
       </Sider>
 

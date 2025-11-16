@@ -1,17 +1,12 @@
 import "../../../styles/formulario.css";
-import { Button, Card, Typography, Space, Tag, Input, Empty, Spin, Row, Col } from "antd";
-import dayjs from "dayjs";
-import { Link } from "react-router-dom";
+import { Input, Empty, Spin, Row, Col } from "antd";
 import {
-  CalendarOutlined,
-  BulbOutlined,
-  ApartmentOutlined,
   SearchOutlined,
 } from "@ant-design/icons";
 import { useState, useMemo, useEffect } from "react";
 import { DesafioFormValues } from "../../../types/desafioFormValues";
+import { DesafioCard } from "../../../components/desafioCard";
 
-const { Title, Text } = Typography;
 
 export const DesafiosPublicados = () => {
   const [busqueda, setBusqueda] = useState("");
@@ -24,7 +19,7 @@ export const DesafiosPublicados = () => {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiIwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAiLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE3NjEwMDg1OTcsImlzcyI6ImJhc2UtYXBpLWV4cHJlc3MtZ2VuZXJhdG9yIiwic3ViIjoiMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwIn0.p4MOoTviDgqfnueyXNnBt-EByQ4wJ__Xz9L9SrsDaPU"}`,
+        Authorization: `Bearer ${localStorage.getItem("token")}`
       },
     })
       .then(async (res) => {
@@ -77,70 +72,7 @@ export const DesafiosPublicados = () => {
           {" "}
           {desafiosFiltrados.map((desafio) => (
             <Col xs={24} sm={12} key={desafio._id}>
-              {" "}
-              <Card
-                style={{
-                  borderRadius: 12,
-                  boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)",
-                  background: "#fff",
-                }}
-                title={
-                  <Space align="center">
-                    <BulbOutlined style={{ color: "#463F3A", fontSize: 20 }} />
-                    <Title level={4} style={{ margin: 0, color: "#463F3A" }}>
-                      {desafio.title}
-                    </Title>
-                  </Space>
-                }
-                extra={
-                  <Link
-                    to={`/emprendedor/empresa/${desafio.idCompany._id}`}
-                    style={{
-                      color: "#BC6C25",
-                      fontWeight: 500,
-                      textDecoration: "none",
-                    }}
-                  >
-                    <ApartmentOutlined />{" "}
-                    {" | " + desafio.idCompany.name.toUpperCase()}
-                  </Link>
-                }
-              >
-                <Text style={{ display: "block", marginBottom: 12 }}>
-                  {desafio.description}
-                </Text>
-                <Tag
-                  icon={<CalendarOutlined />}
-                  color="default"
-                  style={{
-                    fontSize: 13,
-                    borderRadius: 6,
-                    marginBottom: 12,
-                  }}
-                >
-                  Fecha límite:{" "}
-                  {dayjs(desafio.expirationDate).format("DD/MM/YYYY")}
-                </Tag>
-
-                <Link
-                  to={`/emprendedor/publicarPropuesta/${desafio._id}`}
-                  state={{ desafio }}
-                >
-                  <Button
-                    type="primary"
-                    size="large"
-                    block
-                    style={{
-                      backgroundColor: "#463F3A",
-                      border: "none",
-                      fontWeight: 600,
-                      borderRadius: 8,
-                    }}
-                  >
-                    PUBLICAR PROPUESTA
-                  </Button>
-                </Link>
-              </Card>
+              <DesafioCard desafio={desafio} />
             </Col>
           ))}
         </Row>

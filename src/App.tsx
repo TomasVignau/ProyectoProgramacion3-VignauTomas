@@ -3,9 +3,7 @@ import { Login } from "./modules/login";
 import { Registrar } from "./modules/registrar";
 import { NotFound } from "./modules/notFound";
 
-{
-  /* EMPRESA */
-}
+
 import { HomeEmpresa } from "./modules/empresa/home";
 import { FormularioEmpresa } from "./modules/empresa/formulario";
 import { DesafiosEmpresa } from "./modules/empresa/desafios";
@@ -13,9 +11,7 @@ import { LayoutCustomEmpresa } from "./modules/empresa/layout";
 import EmpresaDetalle from "./modules/empresa/detalle";
 import { PropuestaDetalle } from "./modules/empresa/verPropuestas/detalle";
 
-{
-  /* EMPRENDEDOR */
-}
+
 import { HomeEmprendedor } from "./modules/emprendedor/home";
 import { PropuestasEmprendedor } from "./modules/emprendedor/propuestas";
 import { LayoutCustomEmprendedor } from "./modules/emprendedor/layout";
@@ -29,7 +25,7 @@ export const App = () => (
   <div className="App">
     <BrowserRouter>
       <Routes>
-        {/* Login */}
+
         <Route path="/" element={<Login />} />
         <Route
           path="/registrar"
@@ -43,19 +39,19 @@ export const App = () => (
           }
         />
 
-        {/* Rutas Empresa */}
+
         <Route path="empresa" element={<LayoutCustomEmpresa />}>
           <Route path="home" element={<HomeEmpresa />} />
           <Route path="formulario" element={<FormularioEmpresa />} />
           <Route path="desafios" element={<DesafiosEmpresa />} />
 
-          {/* Primero la más específica */}
+
           <Route
             path="verPropuestas/detalle/:idPropuesta"
             element={<PropuestaDetalle />}
           />
-          {/* Luego la más general */}
-          <Route
+
+          /*<Route
             path="verPropuestas/:idChallenge"
             element={<VerPropuestasEmprendedores />}
           />
@@ -63,7 +59,7 @@ export const App = () => (
           <Route path="emprendedor/:idUser" element={<EmprendedorDetalle />} />
         </Route>
 
-        {/* Rutas Emprendedor */}
+
         <Route path="emprendedor" element={<LayoutCustomEmprendedor />}>
           <Route path="home" element={<HomeEmprendedor />} />
           <Route path="desafiosPublicados" element={<DesafiosPublicados />} />
@@ -73,12 +69,105 @@ export const App = () => (
             element={<PublicarPropuesta />}
           />
           <Route path="follows" element={<EmpresasSeguidas />} />
-          <Route path="empresa/:idUser" element={<EmpresaDetalle />} />
+          <Route
+            path="/emprendedor/empresa/:idUser"
+            element={<EmpresaDetalle />}
+          />
         </Route>
 
-        {/* Not Found */}
+
         <Route path="/*" element={<NotFound />} />
       </Routes>
     </BrowserRouter>
   </div>
 );
+
+
+/*import { Routes, Route, useLocation } from "react-router-dom";
+import { Login } from "./modules/login";
+import { Registrar } from "./modules/registrar";
+import { NotFound } from "./modules/notFound";
+
+
+import { HomeEmpresa } from "./modules/empresa/home";
+import { FormularioEmpresa } from "./modules/empresa/formulario";
+import { DesafiosEmpresa } from "./modules/empresa/desafios";
+import { LayoutCustomEmpresa } from "./modules/empresa/layout";
+import EmpresaDetalle from "./modules/empresa/detalle";
+import { PropuestaDetalle } from "./modules/empresa/verPropuestas/detalle";
+import { VerPropuestasEmprendedores } from "./modules/empresa/verPropuestas";
+
+
+import { HomeEmprendedor } from "./modules/emprendedor/home";
+import { PropuestasEmprendedor } from "./modules/emprendedor/propuestas";
+import { LayoutCustomEmprendedor } from "./modules/emprendedor/layout";
+import { DesafiosPublicados } from "./modules/emprendedor/desafiosPublicados";
+import { PublicarPropuesta } from "./modules/emprendedor/publicarPropuestas";
+import EmprendedorDetalle from "./modules/emprendedor/detalle";
+import { EmpresasSeguidas } from "./modules/emprendedor/empresasSeguidas";
+
+export const App = () => {
+  const location = useLocation();
+
+  return (
+    <div className="App">
+      <Routes>
+
+        <Route path="/" element={<Login />} />
+        <Route
+          path="/registrar"
+          element={
+            <Registrar
+              onSubmit={(values) => {
+                console.log("Formulario enviado", values);
+              }}
+            />
+          }
+        />
+
+
+        <Route path="empresa" element={<LayoutCustomEmpresa />}>
+          <Route path="home" element={<HomeEmpresa />} />
+          <Route path="formulario" element={<FormularioEmpresa />} />
+          <Route path="desafios" element={<DesafiosEmpresa />} />
+
+   
+          <Route
+            path="verPropuestas/detalle/:idPropuesta"
+            element={<PropuestaDetalle />}
+          />
+
+          <Route
+            path="verPropuestas/:idChallenge"
+            element={<VerPropuestasEmprendedores />}
+          />
+
+          <Route path="emprendedor/:idUser" element={<EmprendedorDetalle key={location.pathname}/>} />
+        </Route>
+
+
+        <Route path="emprendedor" element={<LayoutCustomEmprendedor />}>
+          <Route path="home" element={<HomeEmprendedor />} />
+          <Route path="desafiosPublicados" element={<DesafiosPublicados />} />
+          <Route path="propuestas" element={<PropuestasEmprendedor />} />
+          <Route
+            path="publicarPropuesta/:_id"
+            element={<PublicarPropuesta />}
+          />
+          <Route path="follows" element={<EmpresasSeguidas />} />
+
+
+          <Route
+            path="empresa/:idUser"
+            element={<EmpresaDetalle key={location.pathname} />}
+          />
+        </Route>
+
+
+        <Route path="/*" element={<NotFound />} />
+      </Routes>
+    </div>
+  );
+};*/
+
+

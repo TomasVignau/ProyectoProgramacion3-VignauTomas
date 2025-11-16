@@ -1,13 +1,11 @@
-.empresaContainer,
-.emprendedorContainer {
+.detalleContainer {
   max-width: 800px;
   margin: 60px auto;
   padding: 24px;
   font-family: "Poppins", sans-serif;
 }
 
-.empresaHeader,
-.emprendedorHeader {
+.detalleHeader {
   text-align: center;
   background: linear-gradient(135deg, #463F3A, #6B6356);
   border-radius: 12px;
@@ -18,19 +16,16 @@
   transition: transform 0.3s ease;
 }
 
-.empresaHeader:hover,
-.emprendedorHeader:hover {
+.detalleHeader:hover {
   transform: scale(1.02);
 }
 
-.empresaTitulo,
-.emprendedorTitulo {
+.detalleTitulo {
   color: #ffffff !important;
   margin-bottom: 8px !important;
 }
 
-.empresaCard,
-.emprendedorCard {
+.detalleCard {
   background: #ffffff;
   border-radius: 12px;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
@@ -38,33 +33,15 @@
   padding: 24px;
 }
 
-.empresaCard:hover,
-.emprendedorCard:hover {
+.detalleDescripcion:hover {
   transform: translateY(-5px);
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
 }
 
-.empresaDescripcion,
-.emprendedorDescripcion {
+.detalleDescripcion {
   font-size: 1rem;
   color: #463F3A;
   line-height: 1.6;
-}
-
-.empresaBoton,
-.emprendedorBoton {
-  background-color: #463F3A !important;
-  border-color: #463F3A !important;
-  border-radius: 8px !important;
-  height: 44px;
-  font-weight: 600;
-  transition: all 0.3s ease !important;
-}
-
-.empresaBoton:hover,
-.emprendedorBoton:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(70, 63, 58, 0.3);
 }
 
 .volverBtn {
@@ -73,55 +50,39 @@
   margin-top: 10px;
 }
 
-.empresaNotFound,
-.emprendedorNotFound {
-  text-align: center;
-  padding: 80px 20px;
-}
-
 /* ======== RESPONSIVE ======== */
 @media (max-width: 992px) {
-  .empresaContainer,
-  .emprendedorContainer {
+  .detalleContainer {
     padding: 16px;
     margin: 40px auto;
   }
 
-  .empresaCard,
-  .emprendedorCard {
+  .detalleCard {
     padding: 20px;
   }
 
-  .empresaHeader,
-  .emprendedorHeader {
+  .detalleHeader {
     padding: 24px 16px;
   }
 }
 
 @media (max-width: 576px) {
-  .empresaContainer,
-  .emprendedorContainer {
+  .detalleContainer {
     margin: 20px auto;
     padding: 12px;
   }
 
-  .empresaHeader,
-  .emprendedorHeader {
+  .detalleHeader {
     padding: 20px 12px;
   }
 
-  .empresaTitulo,
-  .emprendedorTitulo {
+  .detalleTitulo {
     font-size: 1.4rem !important;
   }
 
-  .empresaDescripcion,
-  .emprendedorDescripcion {
+  .detalleDescripcion {
     font-size: 0.95rem;
   }
-
-  .empresaBoton,
-  .emprendedorBoton,
   .volverBtn {
     width: 100%;
   }
