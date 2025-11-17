@@ -1,63 +1,57 @@
-Proyecto Programación 3 – Vignau Tomás
+# Proyecto Programación 3 – Vignau Tomás
+## Aplicación web desarrollada con React, TypeScript y Vite, para Programación 3.
+Aplicación web desarrollada con React, TypeScript y Vite para Programación 3.
 
-Aplicación web desarrollada con React, TypeScript y Vite, para Programación 3.
 
+## Tecnologías principales
+- React + TypeScript
+- Vite 
+- React Router
+- Ant Design 
+- Axios para consumo de API
+- ESLint + TypeScript Rules
 
-Requisitos
+## Requisitos
 
-Asegúrate de tener instaladas las siguientes herramientas:
+Tener instaladas las siguientes herramientas:
 
-Node.js ≥ 18
+- Node.js ≥ 18
+- npm ≥ 9
+- (Opcional) Yarn o PNPM
 
-npm ≥ 9
+---
 
-(Opcional) Yarn o PNPM
+## Instalación
 
-Navegador moderno (Chrome, Firefox, Edge…)
+Cloná el repositorio:
 
-Instalación
-
-Cloná el repositorio y luego instalá las dependencias:
-
-git clone <URL_DEL_REPOSITORIO>
+```
+git clone <https://github.com/TomasVignau/ProyectoProgramacion3-VignauTomas>
 cd ProyectoProgramacion3-VignauTomas
+```
+Instalá dependencias
+
+```
 npm install
+```
 
-Configuración del Entorno
+## Configuración del entorno
 
-El proyecto incluye un archivo:
+Debes crear un nuevo archivo llamado .env
 
-.env.example
-
-
-Este archivo contiene las claves necesarias para que la aplicación funcione.
-
-Debés copiarlo y renombrarlo a .env:
-cp .env.example .env
-
-Luego editá su contenido y dejalo así:
+Dentro colocar:
+```
 VITE_API_URL=http://localhost:4000
 VITE_APP_NAME=ProyectoProgramacion3
 
-🗄️ Migraciones de Base de Datos
+```
 
-Podés ejecutarlas con:
-
-npm run migrate up
-
-Las migraciones dependen de la API/back-end.
-Asegurate de tener la base de datos y el servidor configurados.
-
-Ejecutar el Proyecto
-
-Para levantar el servidor de desarrollo:
-
+Ejecutar el servidor:
+```
 npm run dev
-
+```
 
 Luego abrí tu navegador en:
-
-http://localhost:5173
-
-
-(El puerto puede variar según Vite.)
+```
+http://localhost:5173 (el puerto puede variar)
+```
