@@ -32,6 +32,7 @@ export const FormularioEmpresa = () => {
     "expirationDate",
   ];
 
+  //Calcula el porcentaje de la barrita
   const handleValuesChange = (
     _changedValues: Partial<DesafioFormValues>,
     allValues: DesafioFormValues
@@ -41,16 +42,17 @@ export const FormularioEmpresa = () => {
     setProgress(percent);
   };
 
+  //Deshabilita las fechas inferiores a la actual
   const disabledDate = (current: dayjs.Dayjs) => {
     return current && current < dayjs().startOf("day");
   };
 
+  // Cuando finaliza envía a la base de datos el desafío y envía las notificaciones
   const onFinish = async (values: DesafioFormValues): Promise<void> => {
     try {
       const userStorage = localStorage.getItem("user");
       const usuario = userStorage ? JSON.parse(userStorage) : { _id: "" };
 
-      // 1) Crear el desafío
       const { data: createdForm } = await api.post<DesafioFormValues>(
         `/challenges/`,
         {
@@ -61,13 +63,13 @@ export const FormularioEmpresa = () => {
       );
       console.log("Desafío creado correctamente:", createdForm);
 
-      // 2) Obtener seguidores de esa empresa
+      // Obtiene los seguidores de la empresa
       const { data: followers } = await api.get<UserFormValues[]>(
         `/follow/company/${usuario._id}`
       );
       console.log("Seguidores:", followers);
 
-      // 3) Crear una notificación por cada seguidor
+      // Crea una notificación por cada seguidor
       await Promise.all(
         followers.map((follower) =>
           api.post(`/notification/`, {
@@ -94,6 +96,7 @@ export const FormularioEmpresa = () => {
 
   return (
     <div className="divStyle">
+      {/*Título*/}
       <Space direction="vertical" size="large" style={{ width: "100%" }}>
         <div style={{ textAlign: "center" }}>
           <Title level={2} style={{ color: "#463F3A", marginBottom: 8 }}>
@@ -104,6 +107,7 @@ export const FormularioEmpresa = () => {
           </Text>
         </div>
 
+        {/*Barra de progreso*/}
         <Card bordered={false} style={{ background: "#f9f9f9" }}>
           <Progress
             percent={progress}
@@ -120,6 +124,7 @@ export const FormularioEmpresa = () => {
           />
         </Card>
 
+        {/*Formulario*/}
         <Form
           form={form}
           layout="vertical"

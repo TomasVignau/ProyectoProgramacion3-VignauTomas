@@ -16,6 +16,8 @@ export const PropuestasEmprendedor = () => {
   const [filtroEstado, setFiltroEstado] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
+
+  //Carga las propuestas del emprendedor
   useEffect(() => {
     //const token = localStorage.getItem("token"); Lo pone automáticamente el interceptor de api
     const emprendedor = localStorage.getItem("user");
@@ -43,6 +45,7 @@ export const PropuestasEmprendedor = () => {
     ? propuestas.filter((p) => p.state === filtroEstado)
     : propuestas;
 
+  // Adaptación para mostrar las propuestas
   const propuestasAdaptadas = propuestasFiltradas.map((p) => ({
     key: p._id,
     nombreDesafio: p.idChallenge?.title ?? "—",
@@ -55,6 +58,7 @@ export const PropuestasEmprendedor = () => {
     estado: p.state ?? "—",
   }));
 
+  // Columnas de la tabla
   const columns = [
     {
       title: "Descripción",
@@ -131,12 +135,15 @@ export const PropuestasEmprendedor = () => {
         boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)",
       }}
     >
+      {/*Título*/}
       <Space align="center" style={{ marginBottom: 16 }}>
         <FileTextOutlined style={{ fontSize: 24, color: "#463F3A" }} />
         <Title level={3} style={{ margin: 0, color: "#463F3A" }}>
           Mis Propuestas
         </Title>
       </Space>
+
+      {/*Filtro por estado de propuesta*/}
       <Select
         showSearch
         placeholder="Filtrar por Estado"
@@ -156,6 +163,7 @@ export const PropuestasEmprendedor = () => {
         ]}
       />
 
+      {/*Muestra en la tabla las propuestas*/}
       {isLoading ? (
         <Spin
           tip="Cargando tus propuestas..."

@@ -13,6 +13,7 @@ export const PropuestaDetalle = () => {
 
   console.log("ID de la propuesta:", idPropuesta);
 
+  // Obtiene las propuesta según el id
   useEffect(() => {
     setIsLoading(true);
 
@@ -34,5 +35,6 @@ export const PropuestaDetalle = () => {
     );
   }
 
+  // Envía la propuesta a DETALLE PROPUESTA que se encarga de mostrarla
   return <PropuestaCard propuesta={propuesta} />;
 };

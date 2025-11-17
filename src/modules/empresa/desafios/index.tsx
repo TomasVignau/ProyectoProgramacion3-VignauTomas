@@ -15,6 +15,7 @@ export const DesafiosEmpresa = () => {
   const [isLoading, setIsLoading] = useState(false);
   //const [error, setError] = useState<string | null>(null);
 
+  // Obtiene los desafíos según el id de la empresa
   useEffect(() => {
     const token = localStorage.getItem("token");
     const empresa = localStorage.getItem("user");
@@ -37,6 +38,7 @@ export const DesafiosEmpresa = () => {
       });
   }, []);
 
+  // Datos de las columnas
   const columns: ColumnsType<DesafioFormValues> = [
     {
       title: "ID",
@@ -105,6 +107,7 @@ export const DesafiosEmpresa = () => {
           boxShadow: "0 4px 16px rgba(0, 0, 0, 0.08)",
         }}
       >
+        {/*Título*/}
         <Space direction="vertical" size="large" style={{ width: "100%" }}>
           <div style={{ textAlign: "center" }}>
             <Title level={2} style={{ color: "#463F3A", marginBottom: 8 }}>
@@ -112,6 +115,7 @@ export const DesafiosEmpresa = () => {
             </Title>
           </div>
 
+          {/*Muestra en la tabla los desafíos*/}
           {isLoading ? (
             <div style={{ textAlign: "center", padding: "60px 0" }}>
               <Spin

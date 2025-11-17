@@ -15,6 +15,7 @@ export default function EmpresaDetalle() {
   const [follow, setFollow] = useState(false);
   const [loadingFollow, setLoadingFollow] = useState(false);
 
+  // Busca en la base de datos al usuario
   useEffect(() => {
     if (!idUser || !idEmprendedor) return;
 
@@ -28,6 +29,8 @@ export default function EmpresaDetalle() {
       });
   }, [idEmprendedor, idUser]);
 
+
+  //Chequea si el emprendedor lo sigue o no
   async function handleFollow() {
     if (!idUser || !idEmprendedor) return;
 
@@ -49,6 +52,7 @@ export default function EmpresaDetalle() {
     }
   }
 
+  //Llama a PERFIL DETALLE y le pasa los datos
   return (
     <PerfilDetalle
       id={idUser}

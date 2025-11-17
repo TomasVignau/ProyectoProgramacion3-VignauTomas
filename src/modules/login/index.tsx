@@ -30,7 +30,7 @@ export const Login = () => {
         </div>
       </Carousel>
 
-      {/* Contenido encima */}
+      {/* Contenido */}
       <Row style={{ width: "100%" }}>
         <Col xs={24} sm={24} md={12} className="infoCol">
           <h1 className="tituloPlataforma">

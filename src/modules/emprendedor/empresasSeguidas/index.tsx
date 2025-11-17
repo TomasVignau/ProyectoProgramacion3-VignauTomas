@@ -17,6 +17,7 @@ export const EmpresasSeguidas = () => {
   const emprendedor = JSON.parse(localStorage.getItem("user") || "{}");
   const idEmprendedor: string | undefined = emprendedor?._id;
 
+  //Trae las empresas que sigue el emprendedor
   useEffect(() => {
     if (!idEmprendedor) {
       message.error("ID de emprendedor no disponible");
@@ -48,7 +49,7 @@ export const EmpresasSeguidas = () => {
     });
   }, [busqueda, empresasSeguidas]);
 
-  // --- 3) Unfollow (tipos claros)
+  //Función para dejar de seguir
   async function handleUnfollow(idCompany: string) {
     try {
       const confirm = window.confirm(
@@ -72,6 +73,7 @@ export const EmpresasSeguidas = () => {
 
   return (
     <div className="divDesafios" style={{ display: "grid", gap: 24 }}>
+      {/*Filtro para buscar empresas*/}
       <Input
         size="large"
         placeholder="Buscar empresa por nombre o descripción..."
@@ -88,6 +90,7 @@ export const EmpresasSeguidas = () => {
         allowClear
       />
 
+      {/*Muestras las empresas en EMPRESA CARD*/}
       {loading ? (
         <div style={{ textAlign: "center", padding: "60px 0" }}>
           <Spin size="large" tip="Cargando empresas seguidas..." />

@@ -28,10 +28,11 @@ export const PublicarPropuesta = () => {
   const [form] = Form.useForm();
 
   const location = useLocation();
-  const { desafio } = location.state || {}; // desafío que viene del estado
+  const { desafio } = location.state || {}; // Desafío que viene del estado
 
   const fields: (keyof PropuestaFormValues)[] = ["title", "description"];
 
+  // Cuando finaliza el formulario, envia la propuesta a la base de datos
   const onFinish = async (values: PropuestaFormValues): Promise<void> => {
     try {
       const userStorage = localStorage.getItem("user");
@@ -82,6 +83,7 @@ export const PublicarPropuesta = () => {
     }
   };
 
+  // Actualiza el valor de la barra de progreso
   const handleValuesChange = (
     _changedValues: Partial<PropuestaFormValues>,
     allValues: PropuestaFormValues
@@ -94,7 +96,7 @@ export const PublicarPropuesta = () => {
   return (
     <div className="divStyle">
       <Space direction="vertical" size="large" style={{ width: "100%" }}>
-        {/* Título principal */}
+        {/* Título */}
         <div style={{ textAlign: "center" }}>
           <Title level={2} style={{ color: "#463F3A", marginBottom: 8 }}>
             Publicar Nueva Propuesta

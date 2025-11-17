@@ -31,6 +31,7 @@ export const HomeEmpresa = () => {
 
   const navigate = useNavigate();
 
+  //Obtiene las notificaciones NO vistas del usuario
   useEffect(() => {
     if (!idEmpresa) return;
 
@@ -54,11 +55,13 @@ export const HomeEmpresa = () => {
       console.error("Error al marcar notificación:", err);
     }
 
+    // Navegación según el tipo de notificación
     if (notif.typeNotification === "propuestaRecibida") {
       navigate(`/empresa/desafios`);
     }
   };
 
+  // Menú que muestra las notificaciones
   const menuItems: MenuProps["items"] = notificaciones.map((n, i) => ({
     key: i.toString(),
     label: (
@@ -80,11 +83,13 @@ export const HomeEmpresa = () => {
     <div className="home-container">
       <div className="home-content">
         <Space direction="vertical" size="large" style={{ width: "100%" }}>
+          {/* Título */}
           <div className="home-header">
             <Title level={2} className="home-title">
               Bienvenida, EMPRESA
             </Title>
 
+            {/* Campanita de notificaciones */}
             <div className="home-notifications">
               <Dropdown
                 menu={{ items: menuItems }}
@@ -102,6 +107,7 @@ export const HomeEmpresa = () => {
             </div>
           </div>
 
+          {/* Carrusel */}
           <Card bordered={false} className="home-card">
             <Paragraph className="home-description">
               Gestiona tus desafíos empresariales y revisa las propuestas de
@@ -121,7 +127,8 @@ export const HomeEmpresa = () => {
               ))}
             </Carousel>
           </Card>
-
+          
+          {/* Tarjetas inferiores */}
           <div className="home-grid">
             <Link to="/empresa/formulario" className="home-link">
               <Card hoverable className="home-card-mini">

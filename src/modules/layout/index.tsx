@@ -43,7 +43,6 @@ export const LayoutCustom: FC = () => {
   const [hora, setHora] = useState(new Date());
   const [desafioId, setDesafioId] = useState<string | null>(null);
 
-  // Tipo de usuario y nombre
   const [usuario, setUsuario] = useState<UserFormValues | null>(null);
 
   // Obtener Usuario del Local Storage
@@ -272,7 +271,7 @@ export const LayoutCustom: FC = () => {
             </Space>
           </div>
 
-          {/* === Titulo Empresa === */}
+          {/* Título */}
           <div
             style={{
               padding: "24px 16px",
@@ -302,7 +301,7 @@ export const LayoutCustom: FC = () => {
             }}
           />
 
-          {/* === Botón Cerrar Sesión === */}
+          {/* Botón Cerrar Sesión */}
           <div
             onClick={handleLogout}
             style={{
@@ -338,7 +337,7 @@ export const LayoutCustom: FC = () => {
             justifyContent: "center",
             alignItems: "center",
             boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)",
-            position: "relative", // 🔹 necesario para que left/top funcionen
+            position: "relative",
           }}
         >
           <div
@@ -349,8 +348,8 @@ export const LayoutCustom: FC = () => {
               transform: "translateY(-50%)",
               cursor: "pointer",
               fontSize: 24,
-              color: "#463F3A", // 🔹 cambiar a un color que contraste con el header
-              zIndex: 10, // 🔹 asegurar que esté por encima del título
+              color: "#463F3A",
+              zIndex: 10,
             }}
             onClick={() => setCollapsed(!collapsed)}
           >

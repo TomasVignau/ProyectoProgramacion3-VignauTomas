@@ -21,7 +21,7 @@ export const Registrar = ({ initialValues }: UserFormProps) => {
   
   const governmentIdTypes = ["cuil", "cuit", "dni", "lc", "le", "pas"];
 
-  // Crear usuario
+  // Crea un usuario cuando finaliza
   const onFinish = async (values: UserFormValues): Promise<void> => {
     try {
       const createdUser = await api.post<UserFormValues>("/users/", {
@@ -48,7 +48,7 @@ export const Registrar = ({ initialValues }: UserFormProps) => {
     }
   };
 
-  // Obtener roles
+  // Obtiene los roles
   useEffect(() => {
     const fetchRoles = async () => {
       try {

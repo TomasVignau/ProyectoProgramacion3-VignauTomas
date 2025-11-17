@@ -11,6 +11,8 @@ export const DesafiosPublicados = () => {
   const [desafios, setDesafios] = useState<DesafioFormValues[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
+
+  //Obtengo los desafios de la base de datos
   useEffect(() => {
     setIsLoading(true);
 
@@ -26,6 +28,7 @@ export const DesafiosPublicados = () => {
       .finally(() => setIsLoading(false));
   }, []);
 
+  //Filtro por el texto y por fecha actual
   const desafiosFiltrados = useMemo(() => {
     const hoy = new Date();
     const term = busqueda.toLowerCase().trim();
@@ -43,6 +46,7 @@ export const DesafiosPublicados = () => {
 
   return (
     <div className="divDesafios" style={{ display: "grid", gap: 24 }}>
+      {/*Input para filtrar*/}
       <Input
         size="large"
         placeholder="Buscar desafío por nombre o descripción..."
@@ -59,6 +63,7 @@ export const DesafiosPublicados = () => {
         allowClear
       />
 
+      {/*Si se encuentrar desafíos los muestra en el DESAFÍO CARD*/}
       {isLoading ? (
         <div style={{ textAlign: "center", padding: "60px 0" }}>
           <Spin size="large" tip="Cargando desafíos..." />

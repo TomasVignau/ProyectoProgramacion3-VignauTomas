@@ -31,6 +31,7 @@ export const HomeEmprendedor = () => {
   const emprendedor = JSON.parse(localStorage.getItem("user") || "{}");
   const idEmprendedor: string | undefined = emprendedor?._id;
 
+  //Obtiene las notificaciones NO vistas del usuario
   useEffect(() => {
     if (!idEmprendedor) return;
 
@@ -43,18 +44,20 @@ export const HomeEmprendedor = () => {
       });
   }, [idEmprendedor]);
 
+
+
   const handleSelectNotificacion = async (notif: NotificacionFormValues) => {
     try {
       await api.patch(`/notification/${notif._id}`, { unview: true });
 
-      // 🔁 Recarga desde backend
+      // Recarga las notificaciones
       const res = await api.get(`/notification/${idEmprendedor}`);
       setNotificaciones(res.data);
     } catch (err) {
       console.error(err);
     }
 
-    // 3️⃣ Navegación SEGURA (siempre debe ejecutarse)
+    // Navegación según el tipo de notificación
     if (notif.typeNotification === "desafio") {
       navigate(`/emprendedor/desafiosPublicados`);
       return;
@@ -66,6 +69,7 @@ export const HomeEmprendedor = () => {
     }
   };
 
+  // Menú que muestra las notificaciones
   const menuItems: MenuProps["items"] = notificaciones.map((n, i) => ({
     key: i.toString(),
     label: (
@@ -94,12 +98,13 @@ export const HomeEmprendedor = () => {
     <div className="home-container emprendedor">
       <div className="home-content">
         <Space direction="vertical" size="large" style={{ width: "100%" }}>
-          {/* Encabezado */}
+          {/* Título */}
           <div className="home-header">
             <Title level={2} className="home-title">
               Bienvenido, EMPRENDEDOR
             </Title>
 
+            {/* Campanita de notificaciones */}
             <div className="home-notifications">
               <Dropdown
                 menu={{ items: menuItems }}
@@ -117,7 +122,7 @@ export const HomeEmprendedor = () => {
             </div>
           </div>
 
-          {/* Tarjeta con carrusel */}
+          {/* Carrusel */}
           <Card bordered={false} className="home-card">
             <Paragraph className="home-description">
               Explora los desafíos propuestos por empresas, presenta tus ideas y

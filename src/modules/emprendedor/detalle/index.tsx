@@ -5,6 +5,7 @@ export default function EmprendedorDetalle() {
   const { idUser } = useParams<{ idUser: string }>();
   const apiUrl = import.meta.env.VITE_API_URL;
 
+  //Llama a PERFIL DETALLE pasandole el id
   return (
     <PerfilDetalle
       id={idUser}

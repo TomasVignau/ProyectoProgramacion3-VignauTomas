@@ -30,6 +30,7 @@ export const VerPropuestasEmprendedores = () => {
   const [propuestas, setPropuestas] = useState<PropuestaFormValues[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
+  // Obtiene los desafíos de la empresa
   useEffect(() => {
     setIsLoading(true);
 
@@ -43,6 +44,7 @@ export const VerPropuestasEmprendedores = () => {
       .finally(() => setIsLoading(false));
   }, [idChallenge]);
 
+  // Cambiar el estado de la propuesta
   const handleEstadoChange = async (
     nuevoEstado: string,
     record: PropuestaFormValues
@@ -58,7 +60,7 @@ export const VerPropuestasEmprendedores = () => {
         `Propuesta "${propuestaActualizada.title}" actualizada a "${nuevoEstado}"`
       );
 
-      // Crear notificación
+      // Crea la notificación
       await api.post(`/notification/`, {
         idEmprendedor: record.idUser._id,
         idCompany: record.idCompany._id,
@@ -66,7 +68,7 @@ export const VerPropuestasEmprendedores = () => {
         idProposal: record._id,
       });
 
-      // Actualizar estado local
+      // Actualiza el estado local
       setPropuestas((prev) =>
         prev.map((p) =>
           p._id === propuestaActualizada._id ? { ...p, state: nuevoEstado } : p
@@ -78,6 +80,7 @@ export const VerPropuestasEmprendedores = () => {
     }
   };
 
+  //Campos de la tabla
   const columns: ColumnsType<PropuestaFormValues> = [
     {
       title: "ID Propuesta",
@@ -179,6 +182,7 @@ export const VerPropuestasEmprendedores = () => {
         }}
       >
         <Space direction="vertical" size="large" style={{ width: "100%" }}>
+          {/*Título*/}
           <div style={{ textAlign: "center" }}>
             <Title level={2} style={{ color: "#463F3A", marginBottom: 8 }}>
               Propuestas Recibidas
@@ -188,6 +192,7 @@ export const VerPropuestasEmprendedores = () => {
             </Text>
           </div>
 
+          {/*Muestra la tabla con las propuestas*/}
           {isLoading ? (
             <div style={{ textAlign: "center", padding: "60px 0" }}>
               <Spin
