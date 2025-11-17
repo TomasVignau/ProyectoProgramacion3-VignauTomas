@@ -7,6 +7,7 @@ import {
   Space,
   Typography,
   MenuProps,
+  message,
 } from "antd";
 import {
   BellOutlined,
@@ -16,6 +17,7 @@ import {
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { NotificacionFormValues } from "../../../types/notificacionFormValues";
+import api from "../../../api.ts";
 
 const { Title, Paragraph } = Typography;
 
@@ -23,7 +25,7 @@ export const HomeEmpresa = () => {
   const [notificaciones, setNotificaciones] = useState<
     NotificacionFormValues[]
   >([]);
-  const token = localStorage.getItem("token");
+  //const token = localStorage.getItem("token"); Lo agrega automáticamente el interceptor de api
   const empresa = JSON.parse(localStorage.getItem("user") || "{}");
   const idEmpresa: string | undefined = empresa?._id;
 
@@ -32,46 +34,28 @@ export const HomeEmpresa = () => {
   useEffect(() => {
     if (!idEmpresa) return;
 
-    fetch(`http://localhost:4000/notification/empresa/${idEmpresa}`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token ?? ""}`,
-      },
-    })
-      .then(async (res) => {
-        if (!res.ok) throw new Error("Error al verificar notificaciones");
-        const data = await res.json();
-        setNotificaciones(data);
-      })
+    api
+      .get(`/notification/empresa/${idEmpresa}`)
+      .then((res) => setNotificaciones(res.data))
       .catch((err) => {
         console.error("Error al verificar notificaciones:", err);
+        message.error("Error al verificar notificaciones:", err);
       });
   }, [idEmpresa]);
 
   const handleSelectNotificacion = async (notif: NotificacionFormValues) => {
     try {
-      // Actualiza estado local inmediatamente
       setNotificaciones((prev) =>
         prev.map((n) => (n._id === notif._id ? { ...n, unview: true } : n))
       );
 
-      // Llama al backend con fetch
-      await fetch(`http://localhost:4000/notification/${notif._id}`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token ?? ""}`,
-        },
-        body: JSON.stringify({ unview: true }),
-      });
+      await api.patch(`/notification/${notif._id}`, { unview: true });
     } catch (err) {
       console.error("Error al marcar notificación:", err);
     }
 
     if (notif.typeNotification === "propuestaRecibida") {
       navigate(`/empresa/desafios`);
-      return;
     }
   };
 
@@ -83,7 +67,9 @@ export const HomeEmpresa = () => {
         {n.typeNotification === "propuestaRecibida" && (
           <span>
             Nueva propuesta publicada para el desafio{" "}
-            <strong>{ '"'} {n.idChallenge?.title ?? "-"} {'"' }</strong>
+            <strong>
+              {'"'} {n.idChallenge?.title ?? "-"} {'"'}
+            </strong>
           </span>
         )}
       </div>

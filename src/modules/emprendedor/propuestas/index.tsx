@@ -8,6 +8,7 @@ import {
   CloseCircleOutlined,
   FileTextOutlined,
 } from "@ant-design/icons";
+import api from "../../../api.ts";
 
 const { Title, Text } = Typography;
 
@@ -17,23 +18,16 @@ export const PropuestasEmprendedor = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
+    //const token = localStorage.getItem("token"); Lo pone automáticamente el interceptor de api
     const emprendedor = localStorage.getItem("user");
     const emprendedorId = emprendedor ? JSON.parse(emprendedor)._id : null;
 
     setIsLoading(true);
 
-    fetch(`http://localhost:4000/proposals/emprendedor/${emprendedorId}`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token ?? ""}`,
-      },
-    })
-      .then(async (res) => {
-        if (!res.ok) throw new Error("Token inválido o sin autorización");
-        const data = await res.json();
-        setPropuestas(data);
+    api
+      .get(`/proposals/emprendedor/${emprendedorId}`)
+      .then((res) => {
+        setPropuestas(res.data);
         setIsLoading(false);
       })
       .catch((err) => {

@@ -1,5 +1,5 @@
 import "../../../styles/home.css";
-import { Carousel, Badge, Dropdown, Card, Space, Typography } from "antd";
+import { Carousel, Badge, Dropdown, Card, Space, Typography, message } from "antd";
 import {
   BellOutlined,
   RocketOutlined,
@@ -9,35 +9,31 @@ import { useEffect, useState } from "react";
 import type { MenuProps } from "antd";
 import { Link, useNavigate } from "react-router-dom";
 import { NotificacionFormValues } from "../../../types/notificacionFormValues";
+import api from "../../../api.ts";
 
 const { Title, Paragraph } = Typography;
 
 export const HomeEmprendedor = () => {
-  const [notificaciones, setNotificaciones] = useState<NotificacionFormValues[]>([]);
+  const [notificaciones, setNotificaciones] = useState<
+    NotificacionFormValues[]
+  >([]);
   const navigate = useNavigate();
 
-  const token = localStorage.getItem("token");
+  //const token = localStorage.getItem("token"); Lo pone automáticamente el interceptor de api
   const emprendedor = JSON.parse(localStorage.getItem("user") || "{}");
   const idEmprendedor: string | undefined = emprendedor?._id;
 
   useEffect(() => {
     if (!idEmprendedor) return;
 
-    fetch(`http://localhost:4000/notification/${idEmprendedor}`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token ?? ""}`,
-      },
-    })
-      .then(async (res) => {
-        if (!res.ok) throw new Error("Error al verificar notificaciones");
-        const data = await res.json();
-        setNotificaciones(data);
-      })
+    api
+      .get(`/notification/${idEmprendedor}`)
+      .then((res) => setNotificaciones(res.data))
       .catch((err) => {
         console.error("Error al verificar notificaciones:", err);
+        message.error("Error al verificar notificaciones");
       });
+
   }, [idEmprendedor]);
 
   const handleSelectNotificacion = async (notif: NotificacionFormValues) => {
@@ -47,15 +43,8 @@ export const HomeEmprendedor = () => {
         prev.map((n) => (n._id === notif._id ? { ...n, unview: true } : n))
       );
 
-      // Llama al backend con fetch
-      await fetch(`http://localhost:4000/notification/${notif._id}`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token ?? ""}`,
-        },
-        body: JSON.stringify({ unview: true }),
-      });
+      api.patch(`/notification/${notif._id}`, { unview: true })
+     
     } catch (err) {
       console.error("Error al marcar notificación:", err);
     }

@@ -22,6 +22,7 @@ import {
   ClockCircleOutlined,
 } from "@ant-design/icons";
 import { Outlet, Link, useLocation, useNavigate } from "react-router-dom";
+import UserFormValues from "../../types/userFormValues";
 
 const { Header, Content, Footer, Sider } = Layout;
 const { Title, Text } = Typography;
@@ -43,46 +44,24 @@ export const LayoutCustom: FC = () => {
   const [desafioId, setDesafioId] = useState<string | null>(null);
 
   // Tipo de usuario y nombre
-  const [usuario, setUsuario] = useState<{
-    name: string;
-    tipo?: "empresa" | "emprendedor";
-  }>({
-    name: "Invitado",
-    tipo: undefined,
-  });
+  const [usuario, setUsuario] = useState<UserFormValues | null>(null);
 
   // Obtener Usuario del Local Storage
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
     if (storedUser) {
-      const parsedUser = JSON.parse(storedUser);
-      setUsuario({
-        name: parsedUser.name || "Invitado",
-        tipo:
-          parsedUser.role === "empresa"
-            ? "empresa"
-            : parsedUser.role === "emprendedor"
-              ? "emprendedor"
-              : undefined,
-      });
+      const parsedUser: UserFormValues = JSON.parse(storedUser);
+      setUsuario(parsedUser);
     }
 
     // Pregunta si es Empresa o Emprendedor
     const handleStorageChange = () => {
       const updatedUser = localStorage.getItem("user");
       if (updatedUser) {
-        const parsedUser = JSON.parse(updatedUser);
-        setUsuario({
-          name: parsedUser.name || "Invitado",
-          tipo:
-            parsedUser.role === "empresa"
-              ? "empresa"
-              : parsedUser.role === "emprendedor"
-                ? "emprendedor"
-                : undefined,
-        });
+        const parsedUser: UserFormValues = JSON.parse(updatedUser);
+        setUsuario(parsedUser);
       } else {
-        setUsuario({ name: "Invitado", tipo: undefined });
+        setUsuario(null);
       }
     };
 
@@ -134,7 +113,7 @@ export const LayoutCustom: FC = () => {
 
   // Menú según el tipo de usuario
   const items: MenuItem[] =
-    usuario.tipo === "empresa"
+    usuario?.role === "empresa"
       ? [
           getItem(
             <Link to="/empresa/home">Inicio</Link>,
@@ -152,7 +131,7 @@ export const LayoutCustom: FC = () => {
             <FileTextOutlined />
           ),
         ]
-      : usuario.tipo === "emprendedor"
+      : usuario?.role === "emprendedor"
         ? [
             getItem(
               <Link to="/emprendedor/home">Inicio</Link>,
@@ -182,7 +161,7 @@ export const LayoutCustom: FC = () => {
   // Breadcrumb según el tipo de usuario
   const breadcrumbItems = () => {
     const path = location.pathname;
-    if (usuario.tipo === "empresa") {
+    if (usuario?.role === "empresa") {
       if (path.includes("/empresa/formulario"))
         return [{ href: "/empresa/formulario", title: "Publicar Desafío" }];
       if (path.includes("/empresa/desafios"))
@@ -198,7 +177,7 @@ export const LayoutCustom: FC = () => {
             ? [{ title: "Detalle de Propuesta" }]
             : []),
         ];
-    } else if (usuario.tipo === "emprendedor") {
+    } else if (usuario?.role === "emprendedor") {
       if (path.includes("/emprendedor/desafiosPublicados"))
         return [
           { href: "/emprendedor/desafiosPublicados", title: "Ver Desafíos" },
@@ -219,7 +198,7 @@ export const LayoutCustom: FC = () => {
     return [
       {
         title:
-          "Panel " + (usuario.tipo === "empresa" ? "Empresa" : "Emprendedor"),
+          "Panel " + (usuario?.role === "empresa" ? "Empresa" : "Emprendedor"),
       },
     ];
   };
@@ -259,16 +238,16 @@ export const LayoutCustom: FC = () => {
               size="small"
               style={{ width: "100%", alignItems: "center" }}
             >
-              <Link to = {usuario.tipo === "emprendedor" ? `emprendedor/miinfo/${usuario._id}` : `empresa/miinfo/${usuario._id}`}>
-                <Avatar
-                  size={collapsed ? 40 : 56}
-                  icon={<UserOutlined />}
-                  style={{
-                    backgroundColor: "#6B6356",
-                    border: "2px solid #E0E0E0",
-                  }}
-                />
-              </Link>
+            <Link to = {usuario?.role === "emprendedor" ? `emprendedor/miinfo/${usuario._id}` : `empresa/miinfo/${usuario?._id}`} state={{ from: location.pathname }}>
+              <Avatar
+                size={collapsed ? 40 : 56}
+                icon={<UserOutlined />}
+                style={{
+                  backgroundColor: "#6B6356",
+                  border: "2px solid #E0E0E0",
+                }}
+              />
+            </Link>
               {!collapsed && (
                 <>
                   <Text
@@ -279,7 +258,7 @@ export const LayoutCustom: FC = () => {
                       textAlign: "center",
                     }}
                   >
-                    {usuario.name}
+                    {usuario?.name}
                   </Text>
 
                   <Space size="small" style={{ color: "#BCB8B1" }}>
@@ -306,7 +285,7 @@ export const LayoutCustom: FC = () => {
                 level={4}
                 style={{ color: "#E0E0E0", margin: 0, fontWeight: 700 }}
               >
-                {usuario.tipo === "empresa" ? "EMPRESA" : "EMPRENDEDOR"}
+                {usuario?.role === "empresa" ? "EMPRESA" : "EMPRENDEDOR"}
               </Title>
             )}
           </div>
@@ -397,7 +376,7 @@ export const LayoutCustom: FC = () => {
             items={[
               {
                 href:
-                  usuario.tipo === "empresa"
+                  usuario?.role === "empresa"
                     ? "/empresa/home"
                     : "/emprendedor/home",
                 title: <HomeOutlined />,

@@ -1,12 +1,10 @@
 import "../../../styles/formulario.css";
 import { Input, Empty, Spin, Row, Col } from "antd";
-import {
-  SearchOutlined,
-} from "@ant-design/icons";
+import { SearchOutlined } from "@ant-design/icons";
 import { useState, useMemo, useEffect } from "react";
 import { DesafioFormValues } from "../../../types/desafioFormValues";
 import { DesafioCard } from "../../../components/desafioCard";
-
+import api from "../../../api.ts";
 
 export const DesafiosPublicados = () => {
   const [busqueda, setBusqueda] = useState("");
@@ -15,19 +13,12 @@ export const DesafiosPublicados = () => {
 
   useEffect(() => {
     setIsLoading(true);
-    fetch("http://localhost:4000/challenges", {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${localStorage.getItem("token")}`
-      },
-    })
-      .then(async (res) => {
-        if (!res.ok) throw new Error("Token inválido o sin autorización");
-        const data = await res.json();
-        console.log("📦 Datos recibidos desde API:", data);
 
-        setDesafios(data);
+    api
+      .get("/challenges")
+      .then((res) => {
+        console.log("📦 Datos recibidos desde API:", res.data);
+        setDesafios(res.data);
       })
       .catch((err) => {
         console.error("Error al obtener desafíos:", err);

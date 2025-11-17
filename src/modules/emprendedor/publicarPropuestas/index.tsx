@@ -14,6 +14,7 @@ import {
 import { UploadOutlined, SendOutlined } from "@ant-design/icons";
 import type { UploadProps } from "antd";
 import { useLocation } from "react-router-dom";
+import api from "../../../api.ts";
 
 const { Title, Text } = Typography;
 const { TextArea } = Input;
@@ -35,7 +36,6 @@ export const PublicarPropuesta = () => {
 
   const onFinish = async (values: PropuestaFormValues): Promise<void> => {
     try {
-      const token = localStorage.getItem("token");
       const userStorage = localStorage.getItem("user");
       const usuario = userStorage
         ? JSON.parse(userStorage)
@@ -53,47 +53,24 @@ export const PublicarPropuesta = () => {
 
       console.log("Payload a enviar:", payload);
 
-      const response = await fetch("http://localhost:4000/proposals/", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token ?? ""}`,
-        },
-        body: JSON.stringify(payload),
-      });
+      // POST propuesta
+      const response = await api.post(`/proposals/`, payload);
+      const createdForm = response.data;
 
-      if (!response.ok) {
-        const errorMessage = await response.text();
-        throw new Error(errorMessage || `Error HTTP ${response.status}`);
-      }
-
-      const createdForm = await response.json();
       console.log("Propuesta creada correctamente:", createdForm);
       alert("Propuesta publicada correctamente");
 
-      // ------------------------------------------
-      // 👉 AGREGADO: Enviar UNA notificación solo a la empresa
-      await fetch("http://localhost:4000/notification/", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token ?? ""}`,
-        },
-        body: JSON.stringify({
-          idEmprendedor: usuario._id,
-          idCompany: desafio?.idCompany._id,
-          typeNotification: "propuestaRecibida",
-          idChallenge: desafio?._id,
-        }),
+      // POST notificación
+      await api.post(`/notification/`, {
+        idEmprendedor: usuario._id,
+        idCompany: desafio?.idCompany._id,
+        typeNotification: "propuestaRecibida",
+        idChallenge: desafio?._id,
       });
-      /*console.log("IdEmprendedor: ", usuario._id);
-      console.log("IdCompany: ", desafio?.idCompany._id,);
-      console.log("TypeNotification: ", "propuestaRecibida");
-      console.log("IdChallengue: ", createdForm._id);*/
+
       alert("Propuesta y notificación enviada");
 
-      // ------------------------------------------
-
+      // Limpiar formulario
       form.resetFields();
       setProgress(0);
     } catch (error) {

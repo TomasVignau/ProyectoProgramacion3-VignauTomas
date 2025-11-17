@@ -20,34 +20,25 @@ import {
 import type { ColumnsType } from "antd/es/table";
 import UserFormValues from "../../../types/userFormValues";
 import { PropuestaFormValues } from "../../../types/propuestaFormValues";
-//import PropuestasData from "../../../data/propuestas.json";
+import api from "../../../api.ts";
 
 const { Title, Text } = Typography;
 
 export const VerPropuestasEmprendedores = () => {
   const { idChallenge } = useParams<{ idChallenge: string }>();
-  const token = localStorage.getItem("token");
+  //const token = localStorage.getItem("token"); Lo agrega automáticamente el interceptor de api
   const [propuestas, setPropuestas] = useState<PropuestaFormValues[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     setIsLoading(true);
-    fetch(`http://localhost:4000/proposals/challenge/${idChallenge}`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token ?? ""}`,
-      },
-    })
-      .then(async (res) => {
-        if (!res.ok) throw new Error("Token inválido o sin autorización");
-        const data = await res.json();
-        console.log("📦 Datos recibidos desde API:", data);
 
-        setPropuestas(data);
-      })
+    api
+      .get(`/proposals/challenge/${idChallenge}`)
+      .then((res) => setPropuestas(res.data))
       .catch((err) => {
         console.error("Error al obtener desafíos:", err);
+        message.error("Error al obtener desafíos:", err);
       })
       .finally(() => setIsLoading(false));
   }, [idChallenge]);
@@ -57,46 +48,25 @@ export const VerPropuestasEmprendedores = () => {
     record: PropuestaFormValues
   ) => {
     try {
-      const token = localStorage.getItem("token");
-
-      const response = await fetch(
-        `http://localhost:4000/proposals/${record._id}/state`,
-        {
-          method: "PATCH",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token ?? ""}`,
-          },
-          body: JSON.stringify({ state: nuevoEstado }),
-        }
+      // Actualiza el estado de la propuesta
+      const { data: propuestaActualizada } = await api.patch(
+        `/proposals/${record._id}/state`,
+        { state: nuevoEstado }
       );
-
-      if (!response.ok) {
-        const msg = await response.text();
-        throw new Error(msg || "Error al actualizar el estado");
-      }
-
-      const propuestaActualizada = await response.json();
 
       message.success(
         `Propuesta "${propuestaActualizada.title}" actualizada a "${nuevoEstado}"`
       );
 
-      await fetch("http://localhost:4000/notification/", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token ?? ""}`,
-        },
-        body: JSON.stringify({
-          idEmprendedor: record.idUser._id,
-          idCompany: record.idCompany._id,
-          typeNotification: "propuestaEstado",
-          idProposal: record._id,
-        }),
+      // Crear notificación
+      await api.post(`/notification/`, {
+        idEmprendedor: record.idUser._id,
+        idCompany: record.idCompany._id,
+        typeNotification: "propuestaEstado",
+        idProposal: record._id,
       });
 
-      // Opcional: actualizar estado local si estás mostrando las propuestas en una tabla
+      // Actualizar estado local
       setPropuestas((prev) =>
         prev.map((p) =>
           p._id === propuestaActualizada._id ? { ...p, state: nuevoEstado } : p
@@ -127,7 +97,6 @@ export const VerPropuestasEmprendedores = () => {
       render: (nombre: string) => (
         <Text strong style={{ color: "#463F3A" }}>
           {nombre}
-          
         </Text>
       ),
     },

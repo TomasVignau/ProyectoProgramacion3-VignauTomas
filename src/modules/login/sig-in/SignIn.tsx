@@ -14,6 +14,8 @@ import MuiCard from "@mui/material/Card";
 import { styled } from "@mui/material/styles";
 import ForgotPassword from "./components/ForgotPassword";
 import AppTheme from "../shared-theme/AppTheme";
+import api from "../../../api.ts";
+import axios from "axios";
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: "flex",
@@ -61,58 +63,48 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
     event.preventDefault();
 
     const data = new FormData(event.currentTarget);
-    const email = String(data.get("user")); // 👈 tu campo "user" es el email
+    const email = String(data.get("user"));
     const password = String(data.get("password"));
 
     try {
-      const response = await fetch("http://localhost:4000/auth", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
+      const { data: dataResponse } = await api.post("/auth", {
+        email,
+        password,
       });
 
-      if (response.status === 400) {
-        setuserError(true);
-        setuserErrorMessage("Faltan campos obligatorios.");
-        return;
-      }
-
-      if (response.status === 401) {
-        setuserError(true);
-        setuserErrorMessage("Usuario o contraseña incorrectos.");
-        setPasswordError(true);
-        setPasswordErrorMessage("Usuario o contraseña incorrectos.");
-        return;
-      }
-
-      if (!response.ok) {
-        console.error("Error inesperado:", response.status);
-        return;
-      }
-
-      // Si todo está bien, obtenés el token
-      const dataResponse = await response.json();
       console.log("Usuario autenticado:", dataResponse);
-      
 
-      // Podés guardar el token en localStorage
       localStorage.setItem("token", dataResponse.token);
       localStorage.setItem("user", JSON.stringify(dataResponse.user));
 
-      // Y redirigir según el rol si tu backend lo devuelve
       if (dataResponse.user.role === "empresa") {
         navigate("/empresa/home");
       } else if (dataResponse.user.role === "emprendedor") {
         navigate("/emprendedor/home");
       }
 
-      // Limpieza de errores
       setuserError(false);
       setPasswordError(false);
       setuserErrorMessage("");
       setPasswordErrorMessage("");
-    } catch (error) {
-      console.error("Error al autenticar:", error);
+    } catch (err: unknown) {
+      if (axios.isAxiosError(err) && err.response) {
+        const status = err.response.status;
+
+        if (status === 400) {
+          setuserError(true);
+          setuserErrorMessage("Faltan campos obligatorios.");
+        } else if (status === 401) {
+          setuserError(true);
+          setuserErrorMessage("Usuario o contraseña incorrectos.");
+          setPasswordError(true);
+          setPasswordErrorMessage("Usuario o contraseña incorrectos.");
+        } else {
+          console.error("Error inesperado:", status);
+        }
+      } else {
+        console.error("Error al autenticar:", err);
+      }
     }
   };
 

@@ -1,34 +1,32 @@
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { Card, Typography, Spin, Tag, Space } from "antd";
+import { Card, Typography, Spin, Tag, Space, message } from "antd";
 import { PropuestaFormValues } from "../../../types/propuestaFormValues";
+import api from "../../../api.ts";
 
 const { Title, Text, Paragraph } = Typography;
 
 export const PropuestaDetalle = () => {
   const { idPropuesta } = useParams<{ idPropuesta: string }>();
-  const token = localStorage.getItem("token");
+  //const token = localStorage.getItem("token"); Lo agrega automáticamente el interceptor de api
   const [propuesta, setPropuesta] = useState<PropuestaFormValues | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+
 
   console.log("ID de la propuesta:", idPropuesta);
 
   useEffect(() => {
     setIsLoading(true);
-    fetch(`http://localhost:4000/proposals/${idPropuesta}`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token ?? ""}`,
-      },
-    })
-      .then(async (res) => {
-        if (!res.ok) throw new Error("No se pudo cargar la propuesta");
-        const data = await res.json();
-        setPropuesta(data);
+
+    api
+      .get(`/proposals/${idPropuesta}`)
+      .then((res) => setPropuesta(res.data))
+      .catch((err) => {
+        console.error(err);
+        message.error(err);
       })
-      .catch((err) => console.error(err))
       .finally(() => setIsLoading(false));
+
   }, [idPropuesta]);
 
   if (isLoading || !propuesta) {

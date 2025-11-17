@@ -2,10 +2,12 @@ import { useParams } from "react-router-dom";
 import PerfilDetalle from "../../../components/perfilDetalle";
 import { Button, message } from "antd";
 import { useEffect, useState } from "react";
+import api from "../../../api.ts";
 
 export default function EmpresaDetalle() {
   const { idUser } = useParams<{ idUser: string }>();
-  const token = localStorage.getItem("token");
+  //const token = localStorage.getItem("token"); Lo trae automáticamente el interceptor de api
+  const apiUrl = import.meta.env.VITE_API_URL;
 
   const user = JSON.parse(localStorage.getItem("user") || "{}");
   const idEmprendedor = user?._id;
@@ -16,19 +18,15 @@ export default function EmpresaDetalle() {
   useEffect(() => {
     if (!idUser || !idEmprendedor) return;
 
-    fetch(`http://localhost:4000/follow/buscar/${idEmprendedor}/${idUser}`, {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token ?? ""}`,
-      },
-    })
-      .then(async (res) => {
-        if (!res.ok) return;
-        const data = await res.json();
-        setFollow(data.isFollowing);
+    api
+      .get(`/follow/buscar/${idEmprendedor}/${idUser}`)
+      .then((res) => {
+        setFollow(res.data.isFollowing); // Axios devuelve JSON en res.data
       })
-      .catch((err) => console.error("Error al verificar follow:", err));
-  }, [idEmprendedor, idUser, token]);
+      .catch((err) => {
+        console.error("Error al verificar follow:", err);
+      });
+  }, [idEmprendedor, idUser]);
 
   async function handleFollow() {
     if (!idUser || !idEmprendedor) return;
@@ -36,26 +34,16 @@ export default function EmpresaDetalle() {
     setLoadingFollow(true);
 
     try {
-      const res = await fetch("http://localhost:4000/follow", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token ?? ""}`,
-        },
-        body: JSON.stringify({
-          idEmprendedor,
-          idCompany: idUser,
-        }),
+      await api.post(`/follow`, {
+        idEmprendedor,
+        idCompany: idUser,
       });
-
-      if (!res.ok) {
-        return message.error("No se pudo seguir la empresa");
-      }
 
       setFollow(true);
       message.success("Ahora sigues a esta empresa");
     } catch (err) {
-      message.error("Error al conectar con el servidor" + err);
+      console.error("Error al seguir la empresa:", err);
+      message.error("No se pudo seguir la empresa");
     } finally {
       setLoadingFollow(false);
     }
@@ -64,22 +52,24 @@ export default function EmpresaDetalle() {
   return (
     <PerfilDetalle
       id={idUser}
-      endpoint={`http://localhost:4000/proposals/users/${idUser}`}
+      endpoint={`${apiUrl}/proposals/users/${idUser}`}
       colorTag="#463F3A"
       emptyLabel="Empresa no encontrada"
       extra={
-        <Button
-          style={{
-            backgroundColor: "#463F3A",
-            border: "0px",
-            color: "#fff",
-          }}
-          loading={loadingFollow}
-          onClick={handleFollow}
-          disabled={follow}
-        >
-          {follow ? "Siguiendo" : "+ Seguir"}
-        </Button>
+        idEmprendedor !== idUser ? (
+          <Button
+            style={{
+              backgroundColor: "#463F3A",
+              border: "0px",
+              color: "#fff",
+            }}
+            loading={loadingFollow}
+            onClick={handleFollow}
+            disabled={follow}
+          >
+            {follow ? "Siguiendo" : "+ Seguir"}
+          </Button>
+        ) : null
       }
     />
   );

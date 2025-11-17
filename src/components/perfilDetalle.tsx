@@ -4,6 +4,7 @@ import { ArrowLeftOutlined } from "@ant-design/icons";
 import { useNavigate, useLocation } from "react-router-dom";
 import UserFormValues from "../types/userFormValues";
 import "../styles/detalle.css";
+import api from "../api.ts";
 
 const { Title, Paragraph } = Typography;
 
@@ -26,7 +27,7 @@ export default function PerfilDetalle({
   const location = useLocation();
   const state = location.state as { from?: string };
 
-  const token = localStorage.getItem("token");
+  //const token = localStorage.getItem("token"); Con la configuración, axios lo agrega automaticamente
 
   const [data, setData] = useState<UserFormValues>();
   const [loading, setLoading] = useState<boolean>(true);
@@ -36,21 +37,12 @@ export default function PerfilDetalle({
 
     setLoading(true);
 
-    fetch(endpoint, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token ?? ""}`,
-      },
-    })
-      .then(async (res) => {
-        if (!res.ok) throw new Error("Token inválido o sin autorización");
-        const result = await res.json();
-        setData(result);
-      })
+    api
+      .get(endpoint)
+      .then((res) => setData(res.data))
       .catch((err) => console.error("Error al obtener datos:", err))
       .finally(() => setLoading(false));
-  }, [id, endpoint, token]);
+  }, [id, endpoint]);
 
   if (loading) {
     return (
@@ -69,7 +61,7 @@ export default function PerfilDetalle({
         <Button
           type="default"
           icon={<ArrowLeftOutlined />}
-          onClick={() => navigate(-1)}
+          onClick={() => navigate(state?.from || "")}
         >
           Volver
         </Button>
@@ -101,7 +93,7 @@ export default function PerfilDetalle({
 
           <Button
             icon={<ArrowLeftOutlined />}
-            onClick={() => navigate(state?.from || "/emprendedor/home")}
+            onClick={() => navigate(state?.from || "")}
           >
             Volver
           </Button>

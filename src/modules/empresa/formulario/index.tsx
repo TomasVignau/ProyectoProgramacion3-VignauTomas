@@ -18,9 +18,9 @@ import dayjs from "dayjs";
 import { DesafioFormValues } from "../../../types/desafioFormValues";
 import { useNavigate } from "react-router-dom";
 import UserFormValues from "../../../types/userFormValues";
+import api from "../../../api.ts";
 
 const { Title, Text } = Typography;
-
 
 export const FormularioEmpresa = () => {
   const [progress, setProgress] = useState(0);
@@ -67,62 +67,34 @@ export const FormularioEmpresa = () => {
 
   const onFinish = async (values: DesafioFormValues): Promise<void> => {
     try {
-      const token = localStorage.getItem("token");
       const userStorage = localStorage.getItem("user");
       const usuario = userStorage ? JSON.parse(userStorage) : { _id: "" };
 
       // 1) Crear el desafío
-      const response = await fetch("http://localhost:4000/challenges/", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token ?? ""}`,
-        },
-        body: JSON.stringify({
+      const { data: createdForm } = await api.post<DesafioFormValues>(
+        `/challenges/`,
+        {
           ...values,
           idCompany: usuario._id,
           publicationDate: new Date().toISOString(),
-        }),
-      });
-
-      if (!response.ok) {
-        const errorMessage = await response.text();
-        throw new Error(errorMessage || `Error HTTP ${response.status}`);
-      }
-
-      const createdForm: DesafioFormValues = await response.json();
+        }
+      );
       console.log("Desafío creado correctamente:", createdForm);
 
       // 2) Obtener seguidores de esa empresa
-      const followersRes = await fetch(
-        `http://localhost:4000/follow/company/${usuario._id}`,
-        {
-          headers: { Authorization: `Bearer ${token ?? ""}` },
-        }
+      const { data: followers } = await api.get<UserFormValues[]>(
+        `/follow/company/${usuario._id}`
       );
-
-      if (!followersRes.ok) {
-        throw new Error("No se pudo obtener la lista de seguidores.");
-      }
-
-      const followers: UserFormValues[] = await followersRes.json();
       console.log("Seguidores:", followers);
 
       // 3) Crear una notificación por cada seguidor
       await Promise.all(
-        followers.map((follower: UserFormValues) =>
-          fetch("http://localhost:4000/notification/", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token ?? ""}`,
-            },
-            body: JSON.stringify({
-              idEmprendedor: follower._id,
-              idCompany: usuario._id,
-              typeNotification: "desafio",
-              idChallenge: createdForm._id,
-            }),
+        followers.map((follower) =>
+          api.post(`/notification/`, {
+            idEmprendedor: follower._id,
+            idCompany: usuario._id,
+            typeNotification: "desafio",
+            idChallenge: createdForm._id,
           })
         )
       );

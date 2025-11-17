@@ -5,6 +5,7 @@ import { SearchOutlined } from "@ant-design/icons";
 import { useState, useMemo, useEffect } from "react";
 import UserFormValues from "../../../types/userFormValues";
 import EmpresaCard from "../../../components/empresasSeguidasCard";
+import api from "../../../api.ts";
 
 export const EmpresasSeguidas = () => {
   const [busqueda, setBusqueda] = useState<string>("");
@@ -12,7 +13,7 @@ export const EmpresasSeguidas = () => {
     []
   );
   const [loading, setLoading] = useState<boolean>(true);
-  const token = localStorage.getItem("token");
+  //const token = localStorage.getItem("token"); Se agrega automáticamente con el interceptor en api.ts
   const emprendedor = JSON.parse(localStorage.getItem("user") || "{}");
   const idEmprendedor: string | undefined = emprendedor?._id;
 
@@ -24,24 +25,18 @@ export const EmpresasSeguidas = () => {
     }
 
     setLoading(true);
-    fetch(`http://localhost:4000/follow/${idEmprendedor}`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token ?? ""}`,
-      },
-    })
-      .then(async (res) => {
-        if (!res.ok) throw new Error("Token inválido o sin autorización");
-        const data: UserFormValues[] = await res.json(); // <-- tipado aquí
-        setEmpresasSeguidas(data);
+
+    api
+      .get<UserFormValues[]>(`/follow/${idEmprendedor}`)
+      .then((res) => {
+        setEmpresasSeguidas(res.data);
       })
       .catch((err) => {
         console.error("Error al obtener las empresas seguidas:", err);
         message.error("Error al cargar empresas seguidas");
       })
       .finally(() => setLoading(false));
-  }, [idEmprendedor, token]);
+  }, [idEmprendedor]);
 
   const empresasFiltradas: UserFormValues[] = useMemo(() => {
     const q = busqueda.trim().toLowerCase();
@@ -61,22 +56,9 @@ export const EmpresasSeguidas = () => {
       );
       if (!confirm) return;
 
-      const res = await fetch(
-        `http://localhost:4000/follow/${idEmprendedor}/${idCompany}`,
-        {
-          method: "DELETE",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token ?? ""}`,
-          },
-        }
-      );
+      await api.delete(`/follow/${idEmprendedor}/${idCompany}`);
 
-      if (!res.ok) {
-        const errorText = await res.text();
-        throw new Error(errorText || "Error al dejar de seguir");
-      }
-
+      // Actualizamos la lista local
       setEmpresasSeguidas((prev) =>
         prev.filter((empresa) => empresa._id !== idCompany)
       );

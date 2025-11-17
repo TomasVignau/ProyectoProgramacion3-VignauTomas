@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { RolesFormValues } from "../../types/rolesFormValues";
 import UserFormValues from "../../types/userFormValues";
+import api from "../../api.ts";
+import axios from "axios";
 
 const { Option } = Select;
 
@@ -16,57 +18,52 @@ export const Registrar = ({ initialValues }: UserFormProps) => {
   const navigate = useNavigate();
   const [form] = Form.useForm();
   const [roles, setRoles] = useState<RolesFormValues[]>([]);
-
+  
   const governmentIdTypes = ["cuil", "cuit", "dni", "lc", "le", "pas"];
 
+  // Crear usuario
   const onFinish = async (values: UserFormValues): Promise<void> => {
     try {
-      const token = localStorage.getItem("token");
-
-      const response = await fetch("http://localhost:4000/users/", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token ?? ""}`,
-        },
-        body: JSON.stringify({
-          ...values,
-          company: null,
-        }),
+      const createdUser = await api.post<UserFormValues>("/users/", {
+        ...values,
+        company: null,
       });
 
-      if (!response.ok) {
-        const errorMessage = await response.text();
-        throw new Error(errorMessage || `Error HTTP ${response.status}`);
-      }
-
-      const createdUser: UserFormValues = await response.json();
-      console.log("Usuario creado correctamente:", createdUser);
+      console.log("Usuario creado correctamente:", createdUser.data);
       alert("Usuario creado correctamente");
 
       form.resetFields();
       navigate("/");
-    } catch (error) {
-      if (error instanceof Error) {
-        console.error("Error al crear el usuario:", error.message);
-        alert(error.message);
+    } catch (err: unknown) {
+      if (axios.isAxiosError(err) && err.response) {
+        console.error("Error al crear el usuario:", err.response.data);
+        alert(err.response.data || `Error HTTP ${err.response.status}`);
+      } else if (err instanceof Error) {
+        console.error("Error al crear el usuario:", err.message);
+        alert(err.message);
       } else {
-        console.error("Error desconocido al crear el usuario:", error);
+        console.error("Error desconocido al crear el usuario:", err);
         alert("Error desconocido al crear el usuario");
       }
     }
   };
 
+  // Obtener roles
   useEffect(() => {
-    fetch("http://localhost:4000/roles")
-      .then(async (res) => {
-        if (!res.ok) throw new Error("Error al obtener roles");
-        const data = await res.json();
-        setRoles(data);
-      })
-      .catch((err) => {
-        console.error("Error fetching roles:", err);
-      });
+    const fetchRoles = async () => {
+      try {
+        const res = await api.get("/roles");
+        setRoles(res.data);
+      } catch (err: unknown) {
+        if (axios.isAxiosError(err) && err.response) {
+          console.error("Error al obtener roles:", err.response.data);
+        } else {
+          console.error("Error desconocido al obtener roles:", err);
+        }
+      }
+    };
+
+    fetchRoles();
   }, []);
 
   return (

@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { EyeOutlined, CalendarOutlined } from "@ant-design/icons";
 import type { ColumnsType } from "antd/es/table";
 import { DesafioFormValues } from "../../../types/desafioFormValues";
+import api from "../../../api.ts";
 
 const { Title } = Typography;
 
@@ -24,23 +25,14 @@ export const DesafiosEmpresa = () => {
 
     setIsLoading(true);
 
-    fetch(`http://localhost:4000/challenges/company/${empresaId}`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token ?? ""}`,
-      },
-    })
-      .then(async (res) => {
-        if (!res.ok) throw new Error("Token inválido o sin autorización");
-        const data = await res.json();
-        console.log("Datos recibidos desde API:", data);
-        setDesafios(data);
+    api
+      .get(`/challenges/company/${empresaId}`)
+      .then((res) => {
+        setDesafios(res.data);
         setIsLoading(false);
       })
       .catch((err) => {
-        //setError(err.message || "Error al conectar con la API");
-        console.error("Error fetching challenges:", err);
+        console.error("Error obteniendo challenges:", err);
         setIsLoading(false);
       });
   }, []);
