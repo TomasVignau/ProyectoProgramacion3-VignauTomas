@@ -11,7 +11,6 @@ export interface PropuestaFormValues {
   category: string;
   publicationDate: Date;
   state: string;
-  valoration?: number;
-  feedback?: string;
+  links?: string[];
   isActive: boolean;
 }

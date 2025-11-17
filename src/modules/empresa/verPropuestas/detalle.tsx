@@ -12,7 +12,6 @@ export const PropuestaDetalle = () => {
   const [propuesta, setPropuesta] = useState<PropuestaFormValues | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
-
   console.log("ID de la propuesta:", idPropuesta);
 
   useEffect(() => {
@@ -26,7 +25,6 @@ export const PropuestaDetalle = () => {
         message.error(err);
       })
       .finally(() => setIsLoading(false));
-
   }, [idPropuesta]);
 
   if (isLoading || !propuesta) {
@@ -73,6 +71,19 @@ export const PropuestaDetalle = () => {
         <Paragraph>
           <Text strong>Categoría:</Text>{" "}
           {propuesta?.category ?? "Sin categoría"}
+        </Paragraph>
+
+        <Paragraph>
+          <Text strong>Links:</Text>{" "}
+          {propuesta?.links && propuesta.links.length > 0
+            ? propuesta.links.map((link, index) => (
+                <div key={index}>
+                  <a href={link} target="_blank" rel="noopener noreferrer">
+                    {link}
+                  </a>
+                </div>
+              ))
+            : "Sin links"}
         </Paragraph>
 
         <Paragraph>

@@ -5,14 +5,12 @@ import {
   Input,
   Button,
   Progress,
-  Upload,
   message,
   Card,
   Space,
   Typography,
 } from "antd";
-import { UploadOutlined, SendOutlined } from "@ant-design/icons";
-import type { UploadProps } from "antd";
+import { MinusCircleOutlined, SendOutlined } from "@ant-design/icons";
 import { useLocation } from "react-router-dom";
 import api from "../../../api.ts";
 
@@ -93,24 +91,6 @@ export const PublicarPropuesta = () => {
     setProgress(percent);
   };
 
-  const uploadProps: UploadProps = {
-    name: "file",
-    action: "https://660d2bd96ddfa2943b33731c.mockapi.io/api/upload",
-    headers: {
-      authorization: "authorization-text",
-    },
-    onChange(info) {
-      if (info.file.status !== "uploading") {
-        console.log(info.file, info.fileList);
-      }
-      if (info.file.status === "done") {
-        message.success(`${info.file.name} subido exitosamente`);
-      } else if (info.file.status === "error") {
-        message.error(`Error al subir ${info.file.name}`);
-      }
-    },
-  };
-
   return (
     <div className="divStyle">
       <Space direction="vertical" size="large" style={{ width: "100%" }}>
@@ -177,13 +157,41 @@ export const PublicarPropuesta = () => {
             />
           </Form.Item>
 
-          <Form.Item label="Archivos adjuntos (opcional)" name="archivo">
-            <Upload {...uploadProps}>
-              <Button icon={<UploadOutlined />} block>
-                Adjuntar documentos o recursos
-              </Button>
-            </Upload>
-          </Form.Item>
+          <Form.List name="links">
+            {(fields, { add, remove }) => (
+              <>
+                {fields.map((field) => (
+                  <Form.Item
+                    label={field.name === 0 ? "Links" : ""}
+                    required={false}
+                    key={field.key}
+                  >
+                    <Form.Item
+                      {...field}
+                      validateTrigger={["onChange", "onBlur"]}
+                      noStyle
+                    >
+                      <Input
+                        placeholder="https://example.com"
+                        style={{ width: "80%", marginRight: 8 }}
+                      />
+                    </Form.Item>
+
+                    <MinusCircleOutlined
+                      onClick={() => remove(field.name)}
+                      style={{ color: "red" }}
+                    />
+                  </Form.Item>
+                ))}
+
+                <Form.Item>
+                  <Button type="dashed" onClick={() => add()} block>
+                    + Agregar Link
+                  </Button>
+                </Form.Item>
+              </>
+            )}
+          </Form.List>
 
           <Form.Item>
             <Button

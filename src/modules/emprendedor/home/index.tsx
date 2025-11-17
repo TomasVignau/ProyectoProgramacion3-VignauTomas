@@ -1,5 +1,13 @@
 import "../../../styles/home.css";
-import { Carousel, Badge, Dropdown, Card, Space, Typography, message } from "antd";
+import {
+  Carousel,
+  Badge,
+  Dropdown,
+  Card,
+  Space,
+  Typography,
+  message,
+} from "antd";
 import {
   BellOutlined,
   RocketOutlined,
@@ -33,20 +41,17 @@ export const HomeEmprendedor = () => {
         console.error("Error al verificar notificaciones:", err);
         message.error("Error al verificar notificaciones");
       });
-
   }, [idEmprendedor]);
 
   const handleSelectNotificacion = async (notif: NotificacionFormValues) => {
     try {
-      // Actualiza estado local inmediatamente
-      setNotificaciones((prev) =>
-        prev.map((n) => (n._id === notif._id ? { ...n, unview: true } : n))
-      );
+      await api.patch(`/notification/${notif._id}`, { unview: true });
 
-      api.patch(`/notification/${notif._id}`, { unview: true })
-     
+      // 🔁 Recarga desde backend
+      const res = await api.get(`/notification/${idEmprendedor}`);
+      setNotificaciones(res.data);
     } catch (err) {
-      console.error("Error al marcar notificación:", err);
+      console.error(err);
     }
 
     // 3️⃣ Navegación SEGURA (siempre debe ejecutarse)

@@ -74,13 +74,13 @@ export const PropuestasEmprendedor = () => {
       align: "center" as const,
     },
     {
-      title: "Desafío Asociado",
+      title: "Nombre Desafío",
       dataIndex: "nombreDesafio",
       key: "nombreDesafio",
       render: (text: string) => <Text strong>{text}</Text>,
     },
     {
-      title: "Empresa Desafío",
+      title: "Empresa",
       dataIndex: "empresaDesafio",
       key: "empresaDesafio",
       render: (text: string) => <Text strong>{text}</Text>,
@@ -138,7 +138,6 @@ export const PropuestasEmprendedor = () => {
           Mis Propuestas
         </Title>
       </Space>
-
       <Select
         showSearch
         placeholder="Filtrar por Estado"
@@ -146,6 +145,7 @@ export const PropuestasEmprendedor = () => {
         style={{
           width: "100%",
           maxWidth: 250,
+          marginLeft: 20,
           marginBottom: 20,
         }}
         optionFilterProp="label"
