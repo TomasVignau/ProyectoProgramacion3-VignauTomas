@@ -27,9 +27,14 @@ export const DesafiosPublicados = () => {
   }, []);
 
   const desafiosFiltrados = useMemo(() => {
+    const hoy = new Date();
     const term = busqueda.toLowerCase().trim();
-    if (!term) return desafios;
-    return desafios.filter(
+
+    const activosPorFecha = desafios.filter(
+      (d) => new Date(d.expirationDate) > hoy
+    );
+    if (!term) return activosPorFecha;
+    return activosPorFecha.filter(
       (d) =>
         d.title.toLowerCase().includes(term) ||
         d.description.toLowerCase().includes(term)

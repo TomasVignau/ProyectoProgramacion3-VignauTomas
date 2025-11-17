@@ -4,21 +4,78 @@ logs
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-pnpm-debug.log*
-lerna-debug.log*
 
-node_modules
-dist
-dist-ssr
-*.local
+# Dependency directories
+node_modules/
 
-# Editor directories and files
-.vscode/*
-!.vscode/extensions.json
-.idea
+# Build output
+dist/
+build/
+out/
+.next/
+.vercel/
+
+# Local env files
+.env
+.env.*
+
+# OS files
 .DS_Store
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
-*.sw?
+Thumbs.db
+
+# Editor folders
+.vscode/
+.idea/
+
+# Cache
+.cache/
+.next/cache/
+yarn.lock
+pnpm-lock.yaml
+
+# Testing
+coverage/
+.nyc_output/
+
+# Temporary
+*.tmp
+*.temp
+*.swp
+
+# TypeScript
+*.tsbuildinfo
+
+# Storybook
+storybook-static/
+
+# ESLint cache
+.eslintcache
+
+# Parcel
+.cache/
+.parcel-cache/
+
+# SvelteKit
+.svelte-kit/
+
+# PWA / Service Worker
+public/sw.js
+public/workbox-*.js
+public/worker-*.js
+
+# Optional package manager files
+.pnp.*
+.npm/
+.yarn/
+.yarn/cache
+.yarn/unplugged
+.yarn/build-state.yml
+.yarn/install-state.gz
+.yarn-integrity
+
+# Firebase
+.firebase/
+.firebaserc
+
+# Tailwind
+*.css.map

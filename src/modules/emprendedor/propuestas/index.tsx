@@ -1,5 +1,4 @@
-import { Button, Table, Spin, Tag, Select, Typography, Space } from "antd";
-import { Link } from "react-router-dom";
+import { Table, Spin, Tag, Select, Typography, Space } from "antd";
 import { PropuestaFormValues } from "../../../types/propuestaFormValues";
 import { useState, useEffect } from "react";
 import {
@@ -145,7 +144,7 @@ export const PropuestasEmprendedor = () => {
         style={{
           width: "100%",
           maxWidth: 250,
-          marginLeft: 20,
+          marginLeft: 0,
           marginBottom: 20,
         }}
         optionFilterProp="label"
@@ -177,23 +176,6 @@ export const PropuestasEmprendedor = () => {
           }}
         />
       )}
-
-      <Link to="/emprendedor/home">
-        <Button
-          type="primary"
-          block
-          size="large"
-          style={{
-            marginTop: 24,
-            backgroundColor: "#463F3A",
-            border: "none",
-            borderRadius: 8,
-            fontWeight: 600,
-          }}
-        >
-          Volver al Inicio
-        </Button>
-      </Link>
     </div>
   );
 };

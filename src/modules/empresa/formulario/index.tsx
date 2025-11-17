@@ -6,14 +6,12 @@ import {
   Input,
   Progress,
   DatePicker,
-  Upload,
   message,
   Card,
   Space,
   Typography,
 } from "antd";
-import { UploadOutlined, RocketOutlined } from "@ant-design/icons";
-import type { UploadProps } from "antd";
+import { RocketOutlined } from "@ant-design/icons";
 import dayjs from "dayjs";
 import { DesafioFormValues } from "../../../types/desafioFormValues";
 import { useNavigate } from "react-router-dom";
@@ -45,24 +43,6 @@ export const FormularioEmpresa = () => {
 
   const disabledDate = (current: dayjs.Dayjs) => {
     return current && current < dayjs().startOf("day");
-  };
-
-  const uploadProps: UploadProps = {
-    name: "file",
-    action: "https://660d2bd96ddfa2943b33731c.mockapi.io/api/upload",
-    headers: {
-      authorization: "authorization-text",
-    },
-    onChange(info) {
-      if (info.file.status !== "uploading") {
-        console.log(info.file, info.fileList);
-      }
-      if (info.file.status === "done") {
-        message.success(`${info.file.name} subido exitosamente`);
-      } else if (info.file.status === "error") {
-        message.error(`Error al subir ${info.file.name}`);
-      }
-    },
   };
 
   const onFinish = async (values: DesafioFormValues): Promise<void> => {
@@ -203,14 +183,6 @@ export const FormularioEmpresa = () => {
               format="DD/MM/YYYY"
               placeholder="Selecciona la fecha límite"
             />
-          </Form.Item>
-
-          <Form.Item label="Archivos adjuntos (opcional)" name="archivo">
-            <Upload {...uploadProps}>
-              <Button icon={<UploadOutlined />} block>
-                Adjuntar documentos o recursos
-              </Button>
-            </Upload>
           </Form.Item>
 
           <Form.Item>
