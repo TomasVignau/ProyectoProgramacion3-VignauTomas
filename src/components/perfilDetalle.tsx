@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Card, Typography, Button, Space, Tag, Spin } from "antd";
 import { ArrowLeftOutlined } from "@ant-design/icons";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import UserFormValues from "../types/userFormValues";
 import "../styles/detalle.css";
 
@@ -11,7 +11,6 @@ interface PerfilDetalleProps {
   id: string | undefined;
   endpoint: string; // URL a consultar
   colorTag?: string; // Color del tag (email)
-  esEmpresa?: boolean;
   extra?: React.ReactNode; // Botones u otra acción extra
   emptyLabel?: string; // Texto si no se encuentra
 }
@@ -22,9 +21,11 @@ export default function PerfilDetalle({
   colorTag = "#463F3A",
   extra,
   emptyLabel = "Elemento no encontrado",
-  esEmpresa,
 }: PerfilDetalleProps) {
   const navigate = useNavigate();
+  const location = useLocation();
+  const state = location.state as { from?: string };
+
   const token = localStorage.getItem("token");
 
   const [data, setData] = useState<UserFormValues>();
@@ -83,8 +84,10 @@ export default function PerfilDetalle({
           {data.name}
         </Title>
         <Tag color={colorTag}>{data.email}</Tag>
+        <br></br>
+        <br></br>
 
-        {esEmpresa && extra && <div style={{ marginTop: 15 }}>{extra}</div>}
+        <div className="extraWrapper">{extra ?? null}</div>
       </div>
 
       <Card bordered={false} className="detalleCard" hoverable>
@@ -98,8 +101,7 @@ export default function PerfilDetalle({
 
           <Button
             icon={<ArrowLeftOutlined />}
-            onClick={() => navigate(-1)}
-            className="volverBtn"
+            onClick={() => navigate(state?.from || "/emprendedor/home")}
           >
             Volver
           </Button>

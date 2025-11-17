@@ -42,7 +42,8 @@ export default function EmpresaCard({
       extra={
         showLink && (
           <Link
-            to={`/emprendedor/empresa/${empresa._id}`} 
+            to={`/emprendedor/empresa/${empresa._id}`}
+            state={{ from: location.pathname }}
             style={{
               color: "#BC6C25",
               fontWeight: 500,

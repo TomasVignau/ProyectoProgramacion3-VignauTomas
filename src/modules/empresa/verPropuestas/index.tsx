@@ -127,6 +127,7 @@ export const VerPropuestasEmprendedores = () => {
       render: (nombre: string) => (
         <Text strong style={{ color: "#463F3A" }}>
           {nombre}
+          
         </Text>
       ),
     },
@@ -141,6 +142,7 @@ export const VerPropuestasEmprendedores = () => {
         return (
           <Link
             to={`/empresa/emprendedor/${id}`}
+            state={{ from: location.pathname }}
             style={{
               color: "#BC6C25",
               fontWeight: 500,

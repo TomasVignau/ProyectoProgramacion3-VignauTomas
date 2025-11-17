@@ -20,6 +20,7 @@ import {
   CheckOutlined,
   PlusCircleOutlined,
   FileTextOutlined,
+  EyeOutlined,
 } from "@ant-design/icons";
 import { Outlet, Link, useLocation, useNavigate } from "react-router-dom";
 
@@ -41,6 +42,7 @@ export const LayoutCustomEmprendedor: FC = () => {
   const location = useLocation();
   const [hora, setHora] = useState(new Date());
   const navigate = useNavigate();
+    const [desafioId, setDesafioId] = useState<string | null>(null);
 
   const [usuario, setUsuario] = useState<{ name: string }>({
     name: "Invitado",
@@ -70,6 +72,21 @@ export const LayoutCustomEmprendedor: FC = () => {
     const interval = setInterval(() => setHora(new Date()), 1000);
     return () => clearInterval(interval);
   }, []);
+
+  useEffect(() => {
+  const matchDesafio = location.pathname.match(/\/emprendedor\/publicarPropuesta\/([a-f0-9]{24})$/);
+  if (matchDesafio) {
+    const idDesafio = matchDesafio[1];
+    setDesafioId(idDesafio);
+    localStorage.setItem("desafioId", idDesafio);
+  }
+
+  if (location.pathname.includes("/detalle")) {
+    const storedId = localStorage.getItem("desafioId");
+    if (storedId) setDesafioId(storedId);
+  }
+}, [location.pathname]);
+
 
   const handleLogout = () => {
     // 1. Borrar token y datos
@@ -304,11 +321,36 @@ export const LayoutCustomEmprendedor: FC = () => {
                   if (path.includes("/emprendedor/desafiosPublicados")) {
                     return [
                       {
-                        href: "/empresa/desafiosPublicados",
+                        href: "/emprendedor/desafiosPublicados",
                         title: (
                           <>
                             <PlusCircleOutlined />
                             <span style={{ marginLeft: 4 }}>Ver Desafíos</span>
+                          </>
+                        ),
+                      },
+                    ];
+                  }
+
+                  if (path.includes("/emprendedor/publicarPropuesta")) {
+                    return [
+                      {
+                        href: "/emprendedor/desafiosPublicados",
+                        title: (
+                          <>
+                            <PlusCircleOutlined />
+                            <span style={{ marginLeft: 4 }}>Ver Desafíos</span>
+                          </>
+                        ),
+                      },
+                      {
+                        href: `/emprendedor/publicarPropuesta/${desafioId || ""}`,
+                        title: (
+                          <>
+                            <EyeOutlined />
+                            <span style={{ marginLeft: 4 }}>
+                              Publicar Propuesta
+                            </span>
                           </>
                         ),
                       },

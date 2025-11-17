@@ -67,7 +67,6 @@ export default function EmpresaDetalle() {
       endpoint={`http://localhost:4000/proposals/users/${idUser}`}
       colorTag="#463F3A"
       emptyLabel="Empresa no encontrada"
-      esEmpresa={true} 
       extra={
         <Button
           style={{

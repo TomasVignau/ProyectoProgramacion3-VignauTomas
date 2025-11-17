@@ -93,6 +93,7 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
       // Si todo está bien, obtenés el token
       const dataResponse = await response.json();
       console.log("Usuario autenticado:", dataResponse);
+      
 
       // Podés guardar el token en localStorage
       localStorage.setItem("token", dataResponse.token);

@@ -33,6 +33,7 @@ export const DesafioCard = ({ desafio }: DesafioCardProps) => {
       extra={
         <Link
           to={`/emprendedor/empresa/${desafio.idCompany._id}`}
+          state={{ from: location.pathname }}
           style={{
             color: "#BC6C25",
             fontWeight: 500,

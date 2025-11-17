@@ -10,7 +10,6 @@ export default function EmprendedorDetalle() {
       endpoint={`http://localhost:4000/proposals/users/${idUser}`}
       colorTag="#463F3A"
       emptyLabel="Emprendedor no encontrado"
-      esEmpresa={false} 
     />
   );
 }
